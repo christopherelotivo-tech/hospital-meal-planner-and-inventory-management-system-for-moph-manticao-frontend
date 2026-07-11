@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Root Tokens - Hospital Green & Gold Theme */
+:root {
+  --color-hospital-green: #2d5f3f;
+  --color-hospital-gold: #d4af37;
+  --color-green-light: #3a7a51;
+  --color-green-dark: #1e4029;
+  --color-gold-light: #f0d56f;
+  --color-gold-dark: #b8941f;
+  
+  /* Role Colors */
+  --color-admissions: #3b82f6;
+  --color-doctor: #10b981;
+  --color-dietitian: #8b5cf6;
+  --color-purchasing: #f59e0b;
+  --color-kitchen: #ef4444;
+  --color-foodserver: #06b6d4;
+}
+
+/* Base Styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+/* Branding Font - Georgia Serif */
+.brand-font {
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+/* Heading Defaults */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin: 0;
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+/* Smooth Transitions */
+* {
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Custom Gradient Buttons */
+.btn-gradient-green {
+  background: linear-gradient(135deg, var(--color-hospital-green), var(--color-green-light));
+  box-shadow: 0 4px 12px rgba(45, 95, 63, 0.3);
+}
+
+.btn-gradient-green:hover {
+  box-shadow: 0 6px 20px rgba(45, 95, 63, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn-gradient-gold {
+  background: linear-gradient(135deg, var(--color-hospital-gold), var(--color-gold-light));
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.btn-gradient-gold:hover {
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Card Containers */
+.card-elegant {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card-elegant:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.25rem;
+  }
+  
+  h3 {
+    font-size: 1.125rem;
+  }
+}
