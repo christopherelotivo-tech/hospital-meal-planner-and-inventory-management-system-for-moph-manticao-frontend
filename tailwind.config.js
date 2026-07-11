@@ -7,6 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
+        'hospital-green': '#2D5F3F',
+        'hospital-gold': '#D4AF37',
         primary: {
           green: '#2D5F3F',
           gold: '#D4AF37',
@@ -22,6 +24,11 @@ export default {
       },
       fontFamily: {
         'georgia': ['Georgia', 'serif'],
+        'candal': ['Candal', 'sans-serif'],
+        'caprasimo': ['Caprasimo', 'serif'],
+        'dm-sans': ['"DM Sans"', 'sans-serif'],
+        'dm-mono': ['"DM Mono"', 'monospace'],
+        'dm-serif': ['"DM Serif Display"', 'serif'],
       },
     },
   },

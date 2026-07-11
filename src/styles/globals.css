@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Root Tokens - Hospital Green & Gold Theme */
 :root {
   --color-hospital-green: #2d5f3f;
@@ -57,10 +61,7 @@ h3 {
   line-height: 1.4;
 }
 
-/* Smooth Transitions */
-* {
-  transition: color 0.2s ease, background-color 0.2s ease;
-}
+
 
 /* Scrollbar Styling */
 ::-webkit-scrollbar {

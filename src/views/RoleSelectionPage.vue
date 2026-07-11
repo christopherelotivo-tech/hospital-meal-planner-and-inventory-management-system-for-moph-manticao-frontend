@@ -1,110 +1,134 @@
 <template>
-  <div class="min-h-screen flex bg-gray-50">
-    <!-- Left branding panel -->
-    <div class="hidden lg:flex w-1/2 bg-green-600 relative items-center justify-center p-12">
-      <div class="absolute inset-0 bg-[url('/src/assets/hospital-building.jpg')] bg-cover bg-center opacity-20"></div>
-      <div class="relative z-10 text-center w-3/4 text-white">
-        <div class="flex justify-center mb-6">
-          <img src="@/assets/hospital-seal.png" alt="Hospital Seal" class="w-28 h-28" />
-        </div>
-        <h1 class="brand-font text-4xl font-extrabold mb-2 text-white">Misamis Oriental Provincial Hospital</h1>
-        <h2 class="brand-font text-yellow-300 font-semibold mb-6">MANTICAO</h2>
-        <p class="text-sm text-white/90">AI-Assisted Hospital Meal Planner and Inventory System</p>
-        <p class="text-sm text-white/80 mt-2">Streamlining patient nutrition care through collaborative healthcare management</p>
-      </div>
-    </div>
+  <div class="min-h-screen relative flex items-center justify-center p-4 overflow-y-auto">
+    <!-- Background Image -->
+    <div 
+      class="absolute inset-0 z-0"
+      :style="{ backgroundImage: `url(${hospitalBg})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }"
+    ></div>
+    <!-- Green Overlay -->
+    <div class="absolute inset-0 z-0" style="background-color: rgba(30, 130, 76, 0.75);"></div>
 
-    <!-- Right selection panel -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center p-6">
-      <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 lg:p-8">
-        <button @click="goBack" class="text-gray-500 text-sm flex items-center space-x-2 mb-4">
-          <ArrowLeft :size="16" />
-          <span>Back to Home</span>
+    <!-- Centered Card -->
+    <div class="relative z-10 w-full max-w-[440px] bg-white rounded-3xl shadow-2xl p-6 md:p-8 border border-green-50 my-8">
+      <!-- Back Button -->
+      <button @click="goBack" class="flex items-center gap-1.5 text-gray-500 hover:text-[#2D5F3F] text-xs font-semibold mb-6 transition-colors group">
+        <ArrowLeft :size="14" class="transition-transform group-hover:-translate-x-0.5" />
+        <span>Back to Home</span>
+      </button>
+
+      <!-- Hospital Logo and Title -->
+      <div class="flex flex-col items-center text-center mb-6">
+        <img src="@/assets/hospital-seal.png" alt="MOPH Logo" class="h-14 w-14 mb-2" />
+        <span class="font-dm-mono text-[10px] text-[#2D5F3F] font-bold uppercase tracking-widest">MOPH Manticao</span>
+        <h2 class="font-caprasimo font-normal text-2xl md:text-3xl text-gray-900 mt-1">Select Role</h2>
+        <p class="font-dm-sans text-xs text-gray-400 mt-1">Choose your role to access the system</p>
+      </div>
+
+      <!-- Portals List -->
+      <div class="space-y-3">
+        <!-- Admissions -->
+        <button 
+          @click="selectRole('Admissions Admin')" 
+          class="w-full flex items-center gap-4 p-3.5 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/10 hover:shadow-md transition-all duration-300 group text-left"
+        >
+          <div class="bg-blue-50 text-blue-600 rounded-xl w-11 h-11 flex items-center justify-center shrink-0 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+            <UserPlus :size="18" />
+          </div>
+          <div>
+            <h4 class="font-candal text-sm text-gray-800 font-bold group-hover:text-blue-700 transition-colors">Admissions Admin Portal</h4>
+            <p class="font-dm-sans text-[10px] text-gray-400 mt-0.5">Patient Registration & User Management</p>
+          </div>
         </button>
 
-        <h3 class="text-2xl font-semibold text-gray-900 mb-1">Select Portal</h3>
-        <p class="text-sm text-gray-500 mb-6">Choose your role to access the system</p>
+        <!-- Doctor -->
+        <button 
+          @click="selectRole('Doctor')" 
+          class="w-full flex items-center gap-4 p-3.5 rounded-2xl border border-gray-100 hover:border-green-200 hover:bg-green-50/10 hover:shadow-md transition-all duration-300 group text-left"
+        >
+          <div class="bg-green-50 text-[#2D5F3F] rounded-xl w-11 h-11 flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#2D5F3F] group-hover:text-white">
+            <Stethoscope :size="18" />
+          </div>
+          <div>
+            <h4 class="font-candal text-sm text-gray-800 font-bold group-hover:text-[#2D5F3F] transition-colors">Doctor Portal</h4>
+            <p class="font-dm-sans text-[10px] text-gray-400 mt-0.5">Manage Patients & Diet Prescriptions</p>
+          </div>
+        </button>
 
-        <nav class="space-y-4">
-          <button @click="selectRole('Admissions Admin')" class="portal-item flex items-start space-x-4 w-full p-4 rounded-lg border border-green-200 hover:shadow">
-            <div class="icon bg-green-50 text-green-600 rounded-md w-12 h-12 flex items-center justify-center">
-              <UserPlus :size="20" />
-            </div>
-            <div class="text-left">
-              <div class="font-medium text-gray-900">Admissions Portal</div>
-              <div class="text-xs text-gray-500">Patient Registration & Discharge Management</div>
-            </div>
-          </button>
+        <!-- Dietitian -->
+        <button 
+          @click="selectRole('Dietitian')" 
+          class="w-full flex items-center gap-4 p-3.5 rounded-2xl border border-gray-100 hover:border-purple-200 hover:bg-purple-50/10 hover:shadow-md transition-all duration-300 group text-left"
+        >
+          <div class="bg-purple-50 text-purple-600 rounded-xl w-11 h-11 flex items-center justify-center shrink-0 transition-colors group-hover:bg-purple-600 group-hover:text-white">
+            <Utensils :size="18" />
+          </div>
+          <div>
+            <h4 class="font-candal text-sm text-gray-800 font-bold group-hover:text-purple-700 transition-colors">Dietitian Portal</h4>
+            <p class="font-dm-sans text-[10px] text-gray-400 mt-0.5">Meal Assignment, Budgeting & Planning</p>
+          </div>
+        </button>
 
-          <button @click="selectRole('Doctor')" class="portal-item flex items-start space-x-4 w-full p-4 rounded-lg border border-blue-200 hover:shadow">
-            <div class="icon bg-blue-50 text-blue-600 rounded-md w-12 h-12 flex items-center justify-center">
-              <Stethoscope :size="20" />
-            </div>
-            <div class="text-left">
-              <div class="font-medium text-gray-900">Doctor Portal</div>
-              <div class="text-xs text-gray-500">Diagnose & Approve Meal Plans</div>
-            </div>
-          </button>
+        <!-- Purchasing Officer -->
+        <button 
+          @click="selectRole('Purchasing Officer')" 
+          class="w-full flex items-center gap-4 p-3.5 rounded-2xl border border-gray-100 hover:border-amber-200 hover:bg-amber-50/10 hover:shadow-md transition-all duration-300 group text-left"
+        >
+          <div class="bg-amber-50 text-amber-600 rounded-xl w-11 h-11 flex items-center justify-center shrink-0 transition-colors group-hover:bg-amber-600 group-hover:text-white">
+            <ShoppingCart :size="18" />
+          </div>
+          <div>
+            <h4 class="font-candal text-sm text-gray-800 font-bold group-hover:text-amber-700 transition-colors">Purchasing Officer Portal</h4>
+            <p class="font-dm-sans text-[10px] text-gray-400 mt-0.5">Inventory Tracking & Stock Management</p>
+          </div>
+        </button>
 
-          <button @click="selectRole('Dietitian')" class="portal-item flex items-start space-x-4 w-full p-4 rounded-lg border border-green-100 hover:shadow">
-            <div class="icon bg-emerald-50 text-emerald-600 rounded-md w-12 h-12 flex items-center justify-center">
-              <Utensils :size="20" />
-            </div>
-            <div class="text-left">
-              <div class="font-medium text-gray-900">Dietitian Portal</div>
-              <div class="text-xs text-gray-500">Meal Planning & Inventory Management</div>
-            </div>
-          </button>
+        <!-- Kitchen Staff -->
+        <button 
+          @click="selectRole('Kitchen Staff')" 
+          class="w-full flex items-center gap-4 p-3.5 rounded-2xl border border-gray-100 hover:border-orange-200 hover:bg-orange-50/10 hover:shadow-md transition-all duration-300 group text-left"
+        >
+          <div class="bg-orange-50 text-orange-600 rounded-xl w-11 h-11 flex items-center justify-center shrink-0 transition-colors group-hover:bg-orange-600 group-hover:text-white">
+            <ChefHat :size="18" />
+          </div>
+          <div>
+            <h4 class="font-candal text-sm text-gray-800 font-bold group-hover:text-orange-700 transition-colors">Kitchen Staff Portal</h4>
+            <p class="font-dm-sans text-[10px] text-gray-400 mt-0.5">Production Schedules & Ingredient Preparation</p>
+          </div>
+        </button>
 
-          <button @click="selectRole('Purchasing Officer')" class="portal-item flex items-start space-x-4 w-full p-4 rounded-lg border border-yellow-200 hover:shadow">
-            <div class="icon bg-yellow-50 text-yellow-600 rounded-md w-12 h-12 flex items-center justify-center">
-              <ShoppingCart :size="20" />
-            </div>
-            <div class="text-left">
-              <div class="font-medium text-gray-900">Purchasing Officer Portal</div>
-              <div class="text-xs text-gray-500">Inventory & Procurement Management</div>
-            </div>
-          </button>
-
-          <button @click="selectRole('Kitchen Staff')" class="portal-item flex items-start space-x-4 w-full p-4 rounded-lg border border-orange-200 hover:shadow">
-            <div class="icon bg-orange-50 text-orange-600 rounded-md w-12 h-12 flex items-center justify-center">
-              <ChefHat :size="20" />
-            </div>
-            <div class="text-left">
-              <div class="font-medium text-gray-900">Kitchen Staff Portal</div>
-              <div class="text-xs text-gray-500">Meal Production & Preparation</div>
-            </div>
-          </button>
-
-          <button @click="selectRole('Food Server')" class="portal-item flex items-start space-x-4 w-full p-4 rounded-lg border border-violet-200 hover:shadow">
-            <div class="icon bg-violet-50 text-violet-600 rounded-md w-12 h-12 flex items-center justify-center">
-              <Utensils :size="20" />
-            </div>
-            <div class="text-left">
-              <div class="font-medium text-gray-900">Food Server Portal</div>
-              <div class="text-xs text-gray-500">Meal Distribution & Delivery</div>
-            </div>
-          </button>
-        </nav>
-
-        <p class="text-xs text-gray-400 mt-6 text-center">Secure access to healthcare nutrition services</p>
+        <!-- Food Server -->
+        <button 
+          @click="selectRole('Food Server')" 
+          class="w-full flex items-center gap-4 p-3.5 rounded-2xl border border-gray-100 hover:border-cyan-200 hover:bg-cyan-50/10 hover:shadow-md transition-all duration-300 group text-left"
+        >
+          <div class="bg-cyan-50 text-cyan-600 rounded-xl w-11 h-11 flex items-center justify-center shrink-0 transition-colors group-hover:bg-cyan-600 group-hover:text-white">
+            <Utensils :size="18" />
+          </div>
+          <div>
+            <h4 class="font-candal text-sm text-gray-800 font-bold group-hover:text-cyan-700 transition-colors">Food Server Portal</h4>
+            <p class="font-dm-sans text-[10px] text-gray-400 mt-0.5">Ward Distribution & QR Verification</p>
+          </div>
+        </button>
       </div>
+
+      <p class="font-dm-mono text-[9px] text-gray-400 mt-6 text-center uppercase tracking-wider">Secure Healthcare Access Portal</p>
     </div>
   </div>
 </template>
 
 <script setup>
-
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
+import hospitalBg from '@/assets/hospital-building.jpg';
 import {
   Stethoscope,
   UserPlus,
   ShoppingCart,
   ChefHat,
   Utensils,
-  ArrowLeft } from
-'lucide-vue-next';
+  ArrowLeft
+} from 'lucide-vue-next';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -120,15 +144,8 @@ function goBack() {
 </script>
 
 <style scoped>
-.portal-item {
-  transition: box-shadow .15s, transform .12s;
-}
-.portal-item:hover {
-  transform: translateY(-3px);
-}
-@media (max-width: 1024px) {
-  .hidden.lg\:flex {
-    display: none !important;
-  }
+/* Scoped overrides for portal hover translation */
+button {
+  outline: none;
 }
 </style>
