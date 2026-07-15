@@ -21,7 +21,11 @@
         >
           <!-- User Info -->
           <div class="flex items-center space-x-5">
+            <div v-if="user.photo" class="w-12 h-12 rounded-full shrink-0 overflow-hidden border border-gray-100">
+              <img :src="user.photo" alt="Profile" class="w-full h-full object-cover" />
+            </div>
             <div 
+              v-else
               class="w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
               :class="getAvatarColor(user.name)"
             >

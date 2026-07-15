@@ -40,6 +40,38 @@
                 Personal Information
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                <!-- Profile Photo Upload -->
+                <div class="md:col-span-2 flex items-center gap-5 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                  <!-- Avatar Preview -->
+                  <div class="relative shrink-0">
+                    <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center">
+                      <img v-if="form.photo" :src="form.photo" alt="Profile" class="w-full h-full object-cover" />
+                      <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e6f4f1] to-[#c0ebe0]">
+                        <span class="text-2xl font-bold font-dm-serif text-[#00a67e]">{{ form.name ? form.name.charAt(0).toUpperCase() : '?' }}</span>
+                      </div>
+                    </div>
+                    <label for="photoUpload" class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#00a67e] text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-[#008a61] transition-colors" title="Upload photo">
+                      <Camera :size="13" />
+                    </label>
+                  </div>
+                  <!-- Upload Controls -->
+                  <div class="flex-1 min-w-0">
+                    <p class="font-candal text-sm text-gray-800 mb-0.5">Profile Photo</p>
+                    <p class="font-dm-mono text-xs text-gray-400 mb-3">JPG, PNG or GIF · max 2 MB</p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <label for="photoUpload" class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-candal text-[#00a67e] bg-[#e6f4f1] hover:bg-[#c8ece3] rounded-lg transition-colors border border-[#b0dfd3]">
+                        <Camera :size="13" />
+                        {{ form.photo ? 'Change Photo' : 'Upload Photo' }}
+                      </label>
+                      <button v-if="form.photo" type="button" @click="removePhoto" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-candal text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-100">
+                        Remove
+                      </button>
+                    </div>
+                    <input id="photoUpload" type="file" accept="image/*" class="hidden" @change="handlePhotoUpload" />
+                  </div>
+                </div>
+
                 <div class="md:col-span-2">
                   <label class="block text-xs font-semibold text-gray-700 mb-1.5">Full Name <span class="text-red-500">*</span></label>
                   <input v-model="form.name" type="text" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-[#00a67e] focus:ring-1 focus:ring-[#00a67e] outline-none transition-all text-sm" placeholder="e.g. Dr. Ana Lopez" />
@@ -81,7 +113,7 @@
                 
                 <div v-if="!userToEdit" class="md:col-span-2">
                   <label class="block text-xs font-semibold text-gray-700 mb-1.5">Temporary Password <span class="text-red-500">*</span></label>
-                  <input v-model="form.password" type="password" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-[#00a67e] focus:ring-1 focus:ring-[#00a67e] outline-none transition-all text-sm" placeholder="••••••••" />
+                  <input v-model="form.password" type="password" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-[#00a67e] focus:ring-1 focus:ring-[#00a67e] outline-none transition-all text-sm" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
                 </div>
 
                 <div v-if="userToEdit" class="md:col-span-2">
@@ -116,8 +148,7 @@
 
 import { ref, watch } from 'vue';
 import { useDataStore } from '@/stores/dataStore';
-
-import { UserPlus, X, Save, KeyRound } from 'lucide-vue-next';
+import { UserPlus, X, Save, KeyRound, Camera } from 'lucide-vue-next';
 
 const props = defineProps({
   show: {
@@ -141,7 +172,8 @@ const form = ref({
   department: '',
   contactNumber: '',
   email: '',
-  password: ''
+  password: '',
+  photo: ''
 });
 
 watch(() => props.userToEdit, (newVal) => {
@@ -153,7 +185,8 @@ watch(() => props.userToEdit, (newVal) => {
       department: newVal.department || '',
       contactNumber: newVal.contactNumber || '',
       email: newVal.email || '',
-      password: ''
+      password: '',
+      photo: newVal.photo || ''
     };
   } else {
     form.value = {
@@ -162,7 +195,8 @@ watch(() => props.userToEdit, (newVal) => {
       department: '',
       contactNumber: '',
       email: '',
-      password: ''
+      password: '',
+      photo: ''
     };
   }
 }, { immediate: true });
@@ -175,7 +209,8 @@ function handleSubmit() {
     role: form.value.role,
     department: form.value.department,
     contactNumber: form.value.contactNumber,
-    email: form.value.email
+    email: form.value.email,
+    photo: form.value.photo
   };
 
   if (props.userToEdit) {
@@ -199,6 +234,26 @@ function resetPassword() {
   setTimeout(() => {
     passwordResetSent.value = false;
   }, 3000);
+}
+
+function handlePhotoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) {
+    alert('Photo must be smaller than 2 MB.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    form.value.photo = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  // Reset input so the same file can be re-selected
+  event.target.value = '';
+}
+
+function removePhoto() {
+  form.value.photo = '';
 }
 </script>
 

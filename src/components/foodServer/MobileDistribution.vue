@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="space-y-6">
     <!-- Camera Modal -->
     <div v-if="cameraOpen && !scannedRoom" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
@@ -114,29 +114,28 @@
       <h2 class="text-lg font-bold text-gray-900 mb-4">Mobile Distribution</h2>
       <p class="text-sm text-gray-600 mb-6">QR Scanner &amp; Handheld mode for on-the-go meal deliveries.</p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <button @click="openCamera" class="bg-amber-50 hover:bg-amber-100 p-6 rounded-lg flex flex-col items-center justify-center cursor-pointer transition">
+        <div @click="openCamera" role="button" tabindex="0" class="bg-amber-50 hover:bg-amber-100 p-6 rounded-lg flex flex-col items-center justify-center cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-amber-500">
           <QrCode :size="60" class="text-amber-600 mb-4" />
           <h3 class="font-semibold text-gray-900">QR Scanner</h3>
           <p class="text-sm text-gray-600 text-center">Scan ward QR codes to log distributions instantly.</p>
-          <button class="mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg font-semibold hover:bg-amber-600">
+          <span class="mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg font-semibold hover:bg-amber-600 inline-block">
             Open Camera
-          </button>
-        </button>
-        <button @click="openHandheld" class="bg-amber-50 hover:bg-amber-100 p-6 rounded-lg flex flex-col items-center justify-center cursor-pointer transition">
+          </span>
+        </div>
+        <div @click="openHandheld" role="button" tabindex="0" class="bg-amber-50 hover:bg-amber-100 p-6 rounded-lg flex flex-col items-center justify-center cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-amber-500">
           <Smartphone :size="60" class="text-amber-600 mb-4" />
           <h3 class="font-semibold text-gray-900">Handheld Mode</h3>
           <p class="text-sm text-gray-600 text-center">Manually record deliveries using the mobile interface.</p>
-          <button class="mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg font-semibold hover:bg-amber-600">
+          <span class="mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg font-semibold hover:bg-amber-600 inline-block">
             Open Handheld
-          </button>
-        </button>
+          </span>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-
 import { ref } from 'vue';
 import { QrCode, Smartphone, X, Info, CheckCircle2 } from 'lucide-vue-next';
 
@@ -146,16 +145,6 @@ const scannedRoom = ref(null);
 const lastScannedIndex = ref(-1);
 const handheldMode = ref(false);
 const handheldServed = ref(new Set());
-
-
-
-
-
-
-
-
-
-
 
 const sampleRooms = {
   103: {

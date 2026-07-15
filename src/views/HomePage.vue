@@ -222,25 +222,25 @@
     <!-- About Modal Overlay -->
     <div v-if="isAboutOpen" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
       <!-- Modal Content Card -->
-      <div class="bg-white rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-2xl relative border border-green-50 animate-in fade-in zoom-in-95 duration-200">
+      <div class="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] flex flex-col p-6 md:p-8 shadow-2xl relative border border-green-50 animate-in fade-in zoom-in-95 duration-200">
         <!-- Close Button top right -->
-        <button @click="isAboutOpen = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors" aria-label="Close modal">
+        <button @click="isAboutOpen = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10" aria-label="Close modal">
           <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        <!-- Header -->
-        <div class="flex items-start gap-4 mb-6">
-          <img src="@/assets/hospital-seal.png" alt="MOPH Logo" class="w-14 h-14 shrink-0" />
+        <!-- Header (Static) -->
+        <div class="flex items-start gap-4 mb-5 shrink-0">
+          <img src="@/assets/hospital-seal.png" alt="MOPH Logo" class="w-12 h-12 md:w-14 md:h-14 shrink-0" />
           <div>
-            <h3 class="font-dm-serif text-2xl text-gray-900 leading-tight">About the System</h3>
-            <p class="font-dm-mono text-[10px] text-gray-500 mt-1">MOPH Manticao – Hospital Meal Planner & Inventory Management System</p>
+            <h3 class="font-dm-serif text-xl md:text-2xl text-gray-900 leading-tight">About the System</h3>
+            <p class="font-dm-mono text-[9px] md:text-[10px] text-gray-500 mt-1">MOPH Manticao – Hospital Meal Planner & Inventory Management System</p>
           </div>
         </div>
 
-        <!-- Body -->
-        <div class="space-y-4 font-dm-sans text-gray-600 text-sm leading-relaxed mb-6">
+        <!-- Body (Scrollable) -->
+        <div class="flex-1 overflow-y-auto pr-2.5 space-y-4 font-dm-sans text-gray-600 text-xs md:text-sm leading-relaxed mb-5 scrollbar-thin">
           <p>
             The <strong class="font-bold text-gray-800">MOPH Manticao Hospital Meal Planner and Inventory Management System</strong> is a digital tool made specially for the Misamis Oriental Provincial Hospital in Manticao. It was built specifically for the hospital's Dietary Department to digitize and automate how they manage patient meals.
           </p>
@@ -252,9 +252,9 @@
           </p>
         </div>
 
-        <!-- Footer / Close button -->
-        <div class="border-t border-gray-100 pt-4 flex justify-end">
-          <button @click="isAboutOpen = false" class="font-dm-sans bg-[#2D5F3F] hover:bg-[#1e4029] text-white px-6 py-2 rounded-lg font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200">
+        <!-- Footer / Close button (Static) -->
+        <div class="border-t border-gray-100 pt-4 flex justify-end shrink-0">
+          <button @click="isAboutOpen = false" class="font-dm-sans bg-[#2D5F3F] hover:bg-[#1e4029] text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200">
             Close
           </button>
         </div>

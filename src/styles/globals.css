@@ -14,7 +14,7 @@ html {
   --color-green-dark: #1e4029;
   --color-gold-light: #f0d56f;
   --color-gold-dark: #b8941f;
-  
+
   /* Role Colors */
   --color-admissions: #3b82f6;
   --color-doctor: #10b981;
@@ -26,22 +26,54 @@ html {
 
 /* Base Styles */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
   padding: 0;
 }
 
-/* Branding Font - Georgia Serif */
+/* ==========================================
+   PORTAL FONT SYSTEM
+   ========================================== */
+
+/* Caprasimo — Big display headlines (page titles, hero) */
+.font-caprasimo {
+  font-family: 'Caprasimo', cursive;
+}
+
+/* Candal — Buttons, nav labels, card titles */
+.font-candal {
+  font-family: 'Candal', sans-serif;
+}
+
+/* DM Serif Display — Subheadings, slogans, trust bands */
+.font-dm-serif {
+  font-family: 'DM Serif Display', serif;
+}
+
+/* DM Sans — Body text, descriptions (global default) */
+.font-dm-sans {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* DM Mono — Tags, labels, bullets, metadata */
+.font-dm-mono {
+  font-family: 'DM Mono', monospace;
+}
+
+/* Legacy brand-font → now Candal */
 .brand-font {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: 'Candal', sans-serif;
 }
 
 /* Heading Defaults */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   margin: 0;
 }
@@ -60,8 +92,6 @@ h3 {
   font-size: 1.25rem;
   line-height: 1.4;
 }
-
-
 
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
@@ -84,7 +114,11 @@ h3 {
 
 /* Custom Gradient Buttons */
 .btn-gradient-green {
-  background: linear-gradient(135deg, var(--color-hospital-green), var(--color-green-light));
+  background: linear-gradient(
+    135deg,
+    var(--color-hospital-green),
+    var(--color-green-light)
+  );
   box-shadow: 0 4px 12px rgba(45, 95, 63, 0.3);
 }
 
@@ -94,7 +128,11 @@ h3 {
 }
 
 .btn-gradient-gold {
-  background: linear-gradient(135deg, var(--color-hospital-gold), var(--color-gold-light));
+  background: linear-gradient(
+    135deg,
+    var(--color-hospital-gold),
+    var(--color-gold-light)
+  );
   box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
@@ -108,7 +146,9 @@ h3 {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
 }
 
 .card-elegant:hover {
@@ -121,11 +161,11 @@ h3 {
   h1 {
     font-size: 1.5rem;
   }
-  
+
   h2 {
     font-size: 1.25rem;
   }
-  
+
   h3 {
     font-size: 1.125rem;
   }

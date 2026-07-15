@@ -1,178 +1,126 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Mobile Hamburger Menu -->
-    <div class="md:hidden">
-      <!-- Top Bar -->
-      <div class="bg-red-600 text-white p-4 flex items-center justify-between">
-        <button @click="mobileMenuOpen = !mobileMenuOpen">
-          <Menu :size="24" />
+  <BasePortalLayout ref="layoutRef" contentPaddingClass="p-6">
+    <!-- Sidebar Header -->
+    <template #sidebar-header="{ desktopSidebarOpen }">
+      <div class="p-6 flex items-center space-x-3 whitespace-nowrap overflow-hidden transition-all duration-300" style="background: linear-gradient(135deg, #dc2626 0%, #f87171 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.05), 0 4px 16px rgba(220,38,38,0.25); border-bottom: 1px solid rgba(255,255,255,0.2);">
+        <img src="@/assets/hospital-seal.png" alt="Seal" class="w-10 h-10 object-contain shrink-0 transition-all duration-300" :class="{'mx-auto': !desktopSidebarOpen}" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
+        <div class="transition-opacity duration-300" :class="{'opacity-0 w-0 hidden': !desktopSidebarOpen}">
+          <h2 class="font-candal text-white text-sm leading-tight" style="text-shadow: 0 1px 3px rgba(0,0,0,0.2);">MOPH - Manticao</h2>
+          <p class="font-dm-mono text-xs" style="color: rgba(255,255,255,0.8);">Kitchen Staff</p>
+        </div>
+      </div>
+    </template>
+
+    <!-- Sidebar Navigation -->
+    <template #sidebar-nav="{ desktopSidebarOpen, closeMobile }">
+      <nav class="flex-1 p-4 space-y-1.5">
+        <button
+          v-for="item in menuItems"
+          :key="item.id"
+          @click="selectModule(item.id); closeMobile && closeMobile()"
+          class="w-full flex items-center transition-all duration-200 text-sm font-medium whitespace-nowrap rounded-lg"
+          :class="[
+            currentModule === item.id ? 'bg-red-50 text-red-700 shadow-sm ring-1 ring-red-100' : 'text-gray-600 hover:bg-gray-50 hover:text-red-600',
+            desktopSidebarOpen ? 'space-x-3 px-4 py-3' : 'justify-center py-3 px-0'
+          ]"
+          :title="!desktopSidebarOpen ? item.label : ''"
+        >
+          <component :is="item.icon" :size="20" class="shrink-0" />
+          <span v-if="desktopSidebarOpen" class="font-candal">{{ item.label }}</span>
         </button>
-        <h1 class="brand-font text-lg font-bold">Kitchen Staff Portal</h1>
-        <NotificationBell role="Kitchen Staff" color="red" />
+      </nav>
+    </template>
+
+    <!-- Sidebar Footer -->
+    <template #sidebar-footer="{ desktopSidebarOpen }">
+      <div class="p-4 border-t border-gray-200 overflow-hidden">
+        <button
+          @click="handleLogout"
+          class="w-full flex items-center transition-colors text-red-600 hover:bg-red-50 rounded-lg text-sm font-semibold"
+          :class="desktopSidebarOpen ? 'space-x-3 px-4 py-3' : 'justify-center py-3 px-0'"
+          :title="!desktopSidebarOpen ? 'Logout' : ''"
+        >
+          <LogOut :size="20" class="shrink-0" />
+          <span v-if="desktopSidebarOpen">Logout</span>
+        </button>
       </div>
+    </template>
 
-      <!-- Bottom Navigation (Mobile Only) -->
-      <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
-        <div class="grid grid-cols-2 gap-1 p-2">
-          <button
-            @click="selectModule('schedule')"
-            class="flex flex-col items-center py-2 rounded-lg transition-colors"
-            :class="currentModule === 'schedule' ? 'bg-red-100 text-red-700' : 'text-gray-600'"
-          >
-            <Calendar :size="20" />
-            <span class="text-xs font-semibold mt-1">Schedule</span>
-          </button>
+    <!-- Top Bar Left -->
+    <template #topbar-left>
+      <h1 class="font-caprasimo text-xl text-gray-800 leading-tight">{{ getCurrentModuleTitle() }}</h1>
+      <p class="font-dm-sans text-xs text-gray-500">{{ getCurrentModuleDescription() }}</p>
+    </template>
 
-          <button
-            @click="selectModule('history')"
-            class="flex flex-col items-center py-2 rounded-lg transition-colors"
-            :class="currentModule === 'history' ? 'bg-red-100 text-red-700' : 'text-gray-600'"
-          >
-            <History :size="20" />
-            <span class="text-xs font-semibold mt-1">History</span>
-          </button>
-        </div>
-      </div>
+    <!-- Mobile Topbar Title -->
+    <template #mobile-topbar-title>
+      <h1 class="brand-font text-lg font-bold">Kitchen Staff Portal</h1>
+    </template>
 
-      <!-- Slide-out Menu -->
-      <transition name="slide">
-        <div v-if="mobileMenuOpen" class="fixed inset-0 z-50 bg-black bg-opacity-50" @click="mobileMenuOpen = false">
-          <div class="w-64 h-full bg-white shadow-xl" @click.stop>
-            <div class="bg-red-600 text-white p-6">
-              <div class="flex items-center space-x-3 mb-4">
-                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                  <ChefHat :size="24" />
-                </div>
-                <div>
-                  <p class="font-bold">{{ authStore.currentUser?.name }}</p>
-                  <p class="text-xs text-red-200">Kitchen Staff</p>
-                </div>
-              </div>
-            </div>
+    <!-- Top Bar Right -->
+    <template #topbar-right>
+      <NotificationBell role="Kitchen Staff" color="red" />
+    </template>
 
-            <nav class="p-4">
-              <button
-                v-for="item in menuItems"
-                :key="item.id"
-                @click="selectModule(item.id)"
-                class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg mb-2 transition-colors"
-                :class="currentModule === item.id ? 'bg-red-100 text-red-700' : 'text-gray-700 hover:bg-gray-100'"
-              >
-                <component :is="item.icon" :size="20" />
-                <span class="font-semibold">{{ item.label }}</span>
-              </button>
+    <!-- Mobile Topbar Right -->
+    <template #mobile-topbar-right>
+      <NotificationBell role="Kitchen Staff" color="red" />
+    </template>
 
-              <button
-                @click="handleLogout"
-                class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors mt-4"
-              >
-                <LogOut :size="20" />
-                <span class="font-semibold">Logout</span>
-              </button>
-            </nav>
-          </div>
-        </div>
-      </transition>
-    </div>
+    <!-- Main Content -->
+    <component :is="getCurrentModuleComponent()" />
 
-    <!-- Desktop Layout -->
-    <div class="hidden md:flex h-screen">
-      <!-- Sidebar -->
-      <div class="w-64 bg-green-50 shadow-lg flex flex-col">
-        <!-- Header -->
-        <div class="bg-gradient-to-br from-red-600 to-red-500 text-white p-6">
-          <div class="flex items-center space-x-3 mb-4">
-            <img src="@/assets/hospital-seal.png" alt="Seal" class="w-12 h-12" />
-            <div>
-              <h2 class="brand-font text-lg font-bold">MOPH - Manticao</h2>
-              <p class="text-xs text-red-200">Kitchen Staff</p>
-            </div>
-          </div>
-        </div>
+    <!-- Bottom Navigation (Mobile Only) -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40">
+      <div class="grid grid-cols-2 gap-1 p-2">
+        <button
+          @click="selectModule('schedule')"
+          class="flex flex-col items-center py-2 rounded-lg transition-colors"
+          :class="currentModule === 'schedule' ? 'bg-red-100 text-red-700' : 'text-gray-600'"
+        >
+          <Calendar :size="20" />
+          <span class="text-xs font-semibold mt-1">Schedule</span>
+        </button>
 
-        <!-- Navigation -->
-        <nav class="flex-1 p-4 overflow-y-auto">
-          <button
-            v-for="item in menuItems"
-            :key="item.id"
-            @click="selectModule(item.id)"
-            class="w-full flex items-center space-x-3 px-8 py-3 rounded-lg mb-2 transition-all duration-200"
-            :class="currentModule === item.id ? 'bg-red-100 text-red-700 shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-          >
-            <component :is="item.icon" :size="20" />
-            <span class="font-semibold">{{ item.label }}</span>
-          </button>
-        </nav>
-
-        <!-- Footer -->
-        <div class="p-4 border-t border-gray-200">
-          <button
-            @click="handleLogout"
-            class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
-          >
-            <LogOut :size="20" />
-            <span class="font-semibold">Logout</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Main Content -->
-      <div class="flex-1 overflow-y-auto">
-        <!-- Top Bar -->
-        <div class="bg-white shadow-sm border-b border-gray-200 p-4 flex items-center justify-between">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900">{{ getCurrentModuleTitle() }}</h1>
-            <p class="text-sm text-gray-600">{{ getCurrentModuleDescription() }}</p>
-          </div>
-          <NotificationBell role="Kitchen Staff" color="red" />
-        </div>
-
-        <!-- Module Content -->
-        <div class="p-6">
-          <component :is="getCurrentModuleComponent()" />
-        </div>
+        <button
+          @click="selectModule('history')"
+          class="flex flex-col items-center py-2 rounded-lg transition-colors"
+          :class="currentModule === 'history' ? 'bg-red-100 text-red-700' : 'text-gray-600'"
+        >
+          <History :size="20" />
+          <span class="text-xs font-semibold mt-1">History</span>
+        </button>
       </div>
     </div>
-
-    <!-- Mobile Content -->
-    <div class="md:hidden pb-20">
-      <div class="p-4">
-        <component :is="getCurrentModuleComponent()" />
-      </div>
-    </div>
-  </div>
+  </BasePortalLayout>
 </template>
 
 <script setup>
-
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
-import {
-  Menu,
-  ChefHat,
-  Calendar,
-  History,
-  LogOut } from
-'lucide-vue-next';
+import { Calendar, History, LogOut } from 'lucide-vue-next';
+import BasePortalLayout from '@/components/layout/BasePortalLayout.vue';
 import NotificationBell from '@/components/NotificationBell.vue';
 import ProductionSchedule from '@/components/kitchenStaff/ProductionSchedule.vue';
 import ProductionHistory from '@/components/kitchenStaff/ProductionHistory.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const layoutRef = ref(null);
 
-const mobileMenuOpen = ref(false);
 const currentModule = ref('schedule');
 
 const menuItems = [
-{ id: 'schedule', label: 'Production Schedule', icon: Calendar },
-{ id: 'history', label: 'Production History', icon: History }];
-
+  { id: 'schedule', label: 'Production Schedule', icon: Calendar },
+  { id: 'history', label: 'Production History', icon: History }
+];
 
 function selectModule(moduleId) {
   currentModule.value = moduleId;
-  mobileMenuOpen.value = false;
+  if (layoutRef.value) {
+    layoutRef.value.closeMobileMenu();
+  }
 }
 
 function getCurrentModuleTitle() {
@@ -204,18 +152,3 @@ function handleLogout() {
   router.push('/');
 }
 </script>
-
-<style scoped>
-.slide-enter-active,
-.slide-leave-active {
-  transition: transform 0.3s ease;
-}
-
-.slide-enter-from {
-  transform: translateX(-100%);
-}
-
-.slide-leave-to {
-  transform: translateX(-100%);
-}
-</style>
