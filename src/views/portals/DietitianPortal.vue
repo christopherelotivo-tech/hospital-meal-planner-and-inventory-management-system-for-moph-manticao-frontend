@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <BasePortalLayout ref="layoutRef" contentPaddingClass="p-6">
     <!-- Sidebar Header -->
     <template #sidebar-header="{ desktopSidebarOpen }">
@@ -18,7 +18,7 @@
           v-for="item in menuItems"
           :key="item.id"
           @click="selectModule(item.id); closeMobile && closeMobile()"
-          class="w-full flex items-center px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium whitespace-nowrap"
+          class="w-full flex items-center px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium whitespace-normal"
           :class="[
             currentModule === item.id ? 'bg-green-600 text-white shadow-sm' : 'text-gray-600 hover:bg-green-50 hover:text-green-700',
             desktopSidebarOpen ? 'space-x-3' : 'justify-center'
@@ -26,7 +26,7 @@
           :title="!desktopSidebarOpen ? item.label : ''"
         >
           <component :is="item.icon" :size="18" class="shrink-0" />
-          <span v-if="desktopSidebarOpen" class="font-candal">{{ item.label }}</span>
+          <span v-if="desktopSidebarOpen" class="font-bold text-[13px] whitespace-normal leading-tight tracking-wide">{{ item.label }}</span>
         </button>
       </nav>
     </template>
@@ -117,7 +117,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
-import { LayoutDashboard, Users, ClipboardList, CalendarDays, CalendarCheck, ChefHat, History, LogOut, ChevronDown } from 'lucide-vue-next';
+import { LayoutDashboard, Users, ClipboardList, CalendarDays, CalendarCheck, ChefHat, History, LogOut, ChevronDown, UtensilsCrossed, FileSignature } from 'lucide-vue-next';
 import BasePortalLayout from '@/components/layout/BasePortalLayout.vue';
 import NotificationBell from '@/components/NotificationBell.vue';
 import DietitianDashboard from '@/components/dietitian/DietitianDashboard.vue';
@@ -127,6 +127,8 @@ import MealAssignmentScreen from '@/components/dietitian/MealAssignmentScreen.vu
 import MealCalendar from '@/components/dietitian/MealCalendar.vue';
 import DishMenu from '@/components/dietitian/DishMenu.vue';
 import MealServiceHistory from '@/components/dietitian/MealServiceHistory.vue';
+import DailyProduction from '@/components/dietitian/DailyProduction.vue';
+import DohReport from '@/components/dietitian/DohReport.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -155,9 +157,11 @@ const menuItems = [
   { id: 'patients', label: 'Patient Profiles', icon: Users },
   { id: 'prescriptions', label: 'Diet Prescriptions', icon: ClipboardList },
   { id: 'meals', label: 'Meal Assignment', icon: CalendarDays },
+  { id: 'production', label: 'Daily Production', icon: UtensilsCrossed },
   { id: 'calendar', label: 'Meal Calendar', icon: CalendarCheck },
   { id: 'dish-menu', label: 'Dish Menu', icon: ChefHat },
-  { id: 'history', label: 'Service History', icon: History }
+  { id: 'history', label: 'Service History', icon: History },
+  { id: 'doh-report', label: 'DOH Audit Report', icon: FileSignature }
 ];
 
 function selectModule(moduleId) {
@@ -173,9 +177,11 @@ function getCurrentModuleTitle() {
     patients: 'Patient Profiles',
     prescriptions: 'Diet Prescriptions',
     meals: 'Meal Assignment',
+    production: 'Daily Production & Kitchen Dispatch',
     calendar: 'Meal Calendar',
     'dish-menu': 'Dish Menu',
-    history: 'Meal Service History'
+    history: 'Meal Service History',
+    'doh-report': 'DOH Audit Report'
   };
   return titles[currentModule.value] || 'Dashboard';
 }
@@ -186,9 +192,11 @@ function getCurrentModuleDescription() {
     patients: 'Clinical patient directory and dietary indicators',
     prescriptions: 'View active diet orders from doctors',
     meals: 'Plan and assign meals to patients',
+    production: 'Group patients by diet, assign meals, and generate kitchen prep sheets',
     calendar: 'Monthly overview of patient meal schedules',
     'dish-menu': 'Manage hospital meal options and nutritional information',
-    history: 'Complete audit trail of served meals'
+    history: 'Complete audit trail of served meals',
+    'doh-report': 'Official Provincial Capitol & DOH Report Template'
   };
   return descriptions[currentModule.value] || '';
 }
@@ -199,9 +207,11 @@ function getCurrentModuleComponent() {
     patients: PatientProfiles,
     prescriptions: PrescriptionsView,
     meals: MealAssignmentScreen,
+    production: DailyProduction,
     calendar: MealCalendar,
     'dish-menu': DishMenu,
-    history: MealServiceHistory
+    history: MealServiceHistory,
+    'doh-report': DohReport
   };
   return components[currentModule.value] || DietitianDashboard;
 }

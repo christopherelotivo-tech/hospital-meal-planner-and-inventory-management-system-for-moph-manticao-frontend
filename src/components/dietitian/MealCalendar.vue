@@ -180,7 +180,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Select Dish <span class="text-red-500">*</span></label>
                     <select v-model="addForm.dishId" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-teal-600 outline-none text-sm bg-white transition-all">
                       <option value="">Choose Dish</option>
-                      <option v-for="d in filteredDishCatalog" :key="d.id" :value="d.id">{{ d.name }} ({{ d.dietCategory }} - ₱{{ d.cost }})</option>
+                      <option v-for="d in filteredDishCatalog" :key="d.id" :value="d.id">{{ d.name }} ({{ d.dietCategories[0] }} - ₱{{ d.cost }})</option>
                     </select>
                   </div>
                 </div>
@@ -239,23 +239,8 @@ const addForm = ref({
   dishId: ''
 });
 
-const dishCatalog = [
-{ id: 'D001', name: 'Oatmeal with Fruits', mealType: 'Breakfast', dietCategory: 'Diabetic', cost: 35, calories: 220 },
-{ id: 'D002', name: 'Scrambled Eggs with Toast', mealType: 'Breakfast', dietCategory: 'Regular', cost: 40, calories: 310 },
-{ id: 'D003', name: 'Pancakes with Syrup', mealType: 'Breakfast', dietCategory: 'Regular', cost: 45, calories: 380 },
-{ id: 'D004', name: 'Rice Porridge (Lugaw)', mealType: 'Breakfast', dietCategory: 'Soft', cost: 30, calories: 180 },
-{ id: 'D005', name: 'Grilled Chicken with Rice', mealType: 'Lunch', dietCategory: 'Regular', cost: 55, calories: 450 },
-{ id: 'D006', name: 'Fish Fillet with Vegetables', mealType: 'Lunch', dietCategory: 'Renal', cost: 60, calories: 380 },
-{ id: 'D007', name: 'Pork Adobo with Rice', mealType: 'Lunch', dietCategory: 'Regular', cost: 50, calories: 520 },
-{ id: 'D008', name: 'Vegetable Stir Fry with Tofu', mealType: 'Lunch', dietCategory: 'Diabetic', cost: 45, calories: 290 },
-{ id: 'D009', name: 'Chicken Tinola with Rice', mealType: 'Dinner', dietCategory: 'Regular', cost: 50, calories: 400 },
-{ id: 'D010', name: 'Steamed Fish with Vegetables', mealType: 'Dinner', dietCategory: 'Low Sodium', cost: 55, calories: 320 },
-{ id: 'D011', name: 'Beef Stew with Rice', mealType: 'Dinner', dietCategory: 'Regular', cost: 65, calories: 580 },
-{ id: 'D012', name: 'Vegetable Soup with Bread', mealType: 'Dinner', dietCategory: 'Soft', cost: 40, calories: 260 }];
-
-
 const filteredDishCatalog = computed(() => {
-  return dishCatalog.filter((d) => d.mealType === addForm.value.mealType);
+  return dataStore.dishes.filter((d) => d.mealType === addForm.value.mealType);
 });
 
 const monthName = computed(() => new Date(currentYear.value, currentMonth.value, 1).toLocaleString('en-US', { month: 'long' }));
@@ -302,7 +287,7 @@ function resetAddForm() {
 function addDishToDay() {
   if (!selectedDay.value || !addForm.value.dishId) return;
 
-  const dish = dishCatalog.find((d) => d.id === addForm.value.dishId);
+  const dish = dataStore.dishes.find((d) => d.id === addForm.value.dishId);
   if (!dish) return;
 
   const dateStr = `${currentYear.value}-${String(currentMonth.value + 1).padStart(2, '0')}-${String(selectedDay.value).padStart(2, '0')}`;
@@ -313,7 +298,7 @@ function addDishToDay() {
     dishId: dish.id,
     dishName: dish.name,
     mealType: addForm.value.mealType,
-    dietCategory: dish.dietCategory,
+    dietCategory: dish.dietCategories[0],
     cost: dish.cost,
     calories: dish.calories
   };

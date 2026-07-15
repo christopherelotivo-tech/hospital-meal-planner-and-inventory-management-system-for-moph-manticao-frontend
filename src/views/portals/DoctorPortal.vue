@@ -18,7 +18,7 @@
           v-for="item in menuItems"
           :key="item.id"
           @click="selectModule(item.id); closeMobile && closeMobile()"
-          class="w-full flex items-center px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium whitespace-nowrap"
+          class="w-full flex items-center px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium whitespace-normal"
           :class="[
             currentModule === item.id ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700',
             desktopSidebarOpen ? 'space-x-3' : 'justify-center'
@@ -26,7 +26,7 @@
           :title="!desktopSidebarOpen ? item.label : ''"
         >
           <component :is="item.icon" :size="18" class="shrink-0" />
-          <span v-if="desktopSidebarOpen" class="font-candal">{{ item.label }}</span>
+          <span v-if="desktopSidebarOpen" class="font-bold text-[13px] whitespace-normal leading-tight tracking-wide">{{ item.label }}</span>
         </button>
         <!-- Mobile only logout -->
         <button

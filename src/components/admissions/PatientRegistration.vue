@@ -115,7 +115,19 @@
                 </div>
                 <div>
                   <label class="block text-xs font-semibold text-gray-700 mb-1.5">Known Allergies</label>
-                  <input v-model="form.allergies" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-[#00a67e] focus:ring-1 focus:ring-[#00a67e] outline-none transition-all text-sm" placeholder="e.g. Penicillin, Peanuts (leave blank if none)" />
+                  <select multiple v-model="form.allergies" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:border-[#00a67e] focus:ring-1 focus:ring-[#00a67e] outline-none transition-all text-sm bg-white h-24">
+                    <option value="Dairy">Dairy</option>
+                    <option value="Eggs">Eggs</option>
+                    <option value="Fish">Fish</option>
+                    <option value="Gluten">Gluten</option>
+                    <option value="Peanuts">Peanuts</option>
+                    <option value="Seafood">Seafood</option>
+                    <option value="Shellfish">Shellfish</option>
+                    <option value="Soy">Soy</option>
+                    <option value="Tree Nuts">Tree Nuts</option>
+                    <option value="Wheat">Wheat</option>
+                  </select>
+                  <p class="text-[10px] text-gray-400 mt-1">Hold Ctrl/Cmd to select multiple</p>
                 </div>
               </div>
             </section>
@@ -231,7 +243,7 @@ const form = ref({
   height: null,
   weight: null,
   bloodType: '',
-  allergies: '',
+  allergies: [],
 
   room: '',
   admissionDate: localISOTime,
@@ -256,7 +268,7 @@ watch(() => props.patientToEdit, (newVal) => {
       height: newVal.height || null,
       weight: newVal.weight || null,
       bloodType: newVal.bloodType || '',
-      allergies: newVal.allergies || '',
+      allergies: newVal.allergies ? newVal.allergies.split(',').map(s => s.trim()).filter(s => s !== '') : [],
       room: newVal.room || '',
       admissionDate: newVal.admissionDate || localISOTime,
       admissionType: newVal.admissionType || 'Emergency',
@@ -273,24 +285,11 @@ function handleSubmit() {
   if (!form.value.gender) return;
 
   const patientData = {
-    name: form.value.name,
+    ...form.value,
+    allergies: Array.isArray(form.value.allergies) ? form.value.allergies.join(', ') : form.value.allergies,
     age: form.value.age || 0,
-    gender: form.value.gender,
-    room: form.value.room,
-    admissionDate: form.value.admissionDate,
-    condition: form.value.condition,
-    physician: form.value.physician,
     height: form.value.height || undefined,
-    weight: form.value.weight || undefined,
-    dob: form.value.dob,
-    contactNumber: form.value.contactNumber,
-    address: form.value.address,
-    bloodType: form.value.bloodType,
-    allergies: form.value.allergies,
-    admissionType: form.value.admissionType,
-    emergencyContactName: form.value.emergencyContactName,
-    emergencyContactRel: form.value.emergencyContactRel,
-    emergencyContactNumber: form.value.emergencyContactNumber
+    weight: form.value.weight || undefined
   };
 
   if (props.patientToEdit) {

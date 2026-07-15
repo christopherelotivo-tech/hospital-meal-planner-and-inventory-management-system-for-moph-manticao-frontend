@@ -1,133 +1,129 @@
 <template>
-  <div class="space-y-6">
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div class="card-elegant p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-            <ClipboardList :size="24" class="text-purple-600" />
-          </div>
-        </div>
-        <h3 class="text-3xl font-bold text-gray-900 mb-1">{{ activePrescriptions }}</h3>
-        <p class="text-gray-600">Active Prescriptions</p>
+  <div class="space-y-6 w-full max-w-full overflow-x-hidden pb-8">
+    
+    <!-- Zone 1: Top Context Header -->
+    <div class="w-full rounded-2xl shadow-sm px-6 py-8 flex justify-between items-center text-white mb-6 bg-gradient-to-r from-emerald-600 to-teal-500">
+      <div>
+        <h2 class="text-2xl font-semibold tracking-tight">Welcome back, Dietitian!</h2>
+        <p class="text-emerald-50 text-sm mt-1">Menu Cycle: Week 2</p>
       </div>
-
-      <div class="card-elegant p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-            <CalendarDays :size="24" class="text-blue-600" />
-          </div>
-        </div>
-        <h3 class="text-3xl font-bold text-gray-900 mb-1">{{ todayMealPlans }}</h3>
-        <p class="text-gray-600">Today's Meal Plans</p>
-      </div>
-
-      <div class="card-elegant p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-            <Users :size="24" class="text-green-600" />
-          </div>
-        </div>
-        <h3 class="text-3xl font-bold text-gray-900 mb-1">{{ activePatients }}</h3>
-        <p class="text-gray-600">Active Patients</p>
-      </div>
-
-      <div class="card-elegant p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-            <AlertTriangle :size="24" class="text-yellow-600" />
-          </div>
-        </div>
-        <h3 class="text-3xl font-bold text-gray-900 mb-1">{{ specialDiets }}</h3>
-        <p class="text-gray-600">Special Diet Patients</p>
+      <div class="text-right hidden sm:block">
+        <p class="font-medium">{{ currentDate }}</p>
       </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="card-elegant p-6">
-      <h2 class="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <button
-          @click="$emit('navigate', 'prescriptions')"
-          class="btn-gradient-green text-white p-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-3"
-        >
-          <ClipboardList :size="20" />
-          <span>View Prescriptions</span>
-        </button>
-
-        <button
-          @click="$emit('navigate', 'meals')"
-          class="bg-purple-600 text-white p-4 rounded-lg font-semibold hover:bg-purple-700 transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg"
-        >
-          <Utensils :size="20" />
-          <span>Assign Meals</span>
-        </button>
-
-        <button
-          @click="$emit('navigate', 'history')"
-          class="bg-white border-2 border-purple-600 text-purple-600 p-4 rounded-lg font-semibold hover:bg-purple-50 transition-all duration-300 flex items-center justify-center space-x-3"
-        >
-          <History :size="20" />
-          <span>Service History</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Pending Prescriptions Alert -->
-    <div v-if="newPrescriptions > 0" class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
-      <div class="flex items-center space-x-3">
-        <AlertTriangle :size="24" class="text-yellow-600" />
-        <div>
-          <h3 class="font-bold text-gray-900">{{ newPrescriptions }} New Diet Prescription{{ newPrescriptions > 1 ? 's' : '' }}</h3>
-          <p class="text-sm text-gray-700">New diet orders are waiting for meal planning</p>
+    <!-- Zone 2: KPI & Census Metric Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      
+      <!-- Card 1: Active Meal Census & Budget Controller -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 flex flex-col justify-center border-l-4 border-l-emerald-500">
+        <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Active Meal Census</p>
+        <h3 class="text-3xl font-bold text-slate-800 mb-2">{{ activePatients }} <span class="text-lg text-slate-500 font-medium">Active Meals</span></h3>
+        <div class="bg-emerald-100 text-emerald-800 rounded-md px-2 py-1 text-xs font-bold self-start mt-auto">
+          Daily Budget Pool: ₱{{ (activePatients * 150).toLocaleString() }}
         </div>
       </div>
-    </div>
 
-    <!-- Recent Prescriptions -->
-    <div class="card-elegant p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-gray-900">Recent Diet Prescriptions</h2>
-        <button class="text-purple-600 hover:text-purple-700 text-sm font-semibold">View All</button>
-      </div>
-
-      <div class="space-y-3">
-        <div
-          v-for="prescription in recentPrescriptions"
-          :key="prescription.id"
-          class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-        >
-          <div class="flex items-center space-x-4">
-            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-              <FileText :size="24" class="text-purple-600" />
-            </div>
-            <div>
-              <h4 class="font-semibold text-gray-900">{{ prescription.patientName }}</h4>
-              <p class="text-sm text-gray-600">{{ prescription.dietType }}</p>
-              <div v-if="prescription.allergies.length > 0" class="flex flex-wrap gap-1 mt-1">
-                <span
-                  v-for="allergy in prescription.allergies"
-                  :key="allergy"
-                  class="bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-xs"
-                >
-                  {{ allergy }}
-                </span>
-              </div>
-            </div>
+      <!-- Card 2: Active Prescriptions -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 flex flex-col justify-center">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Active Prescriptions</p>
+            <h3 class="text-3xl font-bold text-slate-800">{{ activePrescriptions }}</h3>
           </div>
-          <div class="text-right">
-            <p class="text-sm font-semibold text-gray-900">{{ formatDate(prescription.createdAt) }}</p>
-            <p class="text-xs text-gray-500">Dr. {{ prescription.doctorName.split(' ').pop() }}</p>
+          <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+            <ClipboardList :size="24" />
           </div>
         </div>
       </div>
+
+      <!-- Card 3: Today's Meal Plans -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 flex flex-col justify-center">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Today's Meal Plans</p>
+            <h3 class="text-3xl font-bold text-slate-800">{{ todayMealPlans }}</h3>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+            <CalendarDays :size="24" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Special Diet Patients -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 flex flex-col justify-center">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Special Diets</p>
+            <h3 class="text-3xl font-bold text-slate-800">{{ specialDiets }}</h3>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+            <AlertTriangle :size="24" />
+          </div>
+        </div>
+      </div>
+
     </div>
+
+    <!-- Zone 3: Quick Actions Row -->
+    <div class="flex flex-wrap gap-4 mt-6">
+      <button @click="$emit('navigate', 'prescriptions')" class="px-5 py-2.5 rounded-lg text-white font-medium shadow-sm hover:shadow-md transition-all active:scale-95 bg-emerald-600 hover:bg-emerald-700 flex items-center space-x-2">
+        <ClipboardList :size="18" />
+        <span>View Prescriptions</span>
+      </button>
+      <button @click="$emit('navigate', 'meals')" class="px-5 py-2.5 rounded-lg font-medium shadow-sm hover:shadow-md transition-all active:scale-95 bg-white border border-emerald-600 text-emerald-700 hover:bg-emerald-50 flex items-center space-x-2">
+        <Utensils :size="18" />
+        <span>Assign Meals</span>
+      </button>
+      <button @click="$emit('navigate', 'history')" class="px-5 py-2.5 rounded-lg font-medium shadow-sm hover:shadow-md transition-all active:scale-95 bg-white border border-emerald-600 text-emerald-700 hover:bg-emerald-50 flex items-center space-x-2">
+        <History :size="18" />
+        <span>Service History</span>
+      </button>
+    </div>
+
+    <!-- Zone 4: Primary Content Grid Workspace -->
+    <div class="mt-6 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <h3 class="font-bold text-slate-800">Recent Diet Prescriptions</h3>
+        <button class="text-emerald-600 text-sm font-medium hover:underline">View All</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-white border-b border-slate-100 text-sm text-slate-500">
+              <th class="py-3 px-5 font-semibold">Date</th>
+              <th class="py-3 px-5 font-semibold">Patient</th>
+              <th class="py-3 px-5 font-semibold">Diet Type & Restrictions</th>
+              <th class="py-3 px-5 font-semibold">Prescribing Doctor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="prescription in recentPrescriptions" :key="prescription.id" class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+              <td class="py-3 px-5 text-sm text-slate-500 whitespace-nowrap">{{ formatDate(prescription.createdAt) }}</td>
+              <td class="py-3 px-5 text-sm font-medium text-slate-800">{{ prescription.patientName }}</td>
+              <td class="py-3 px-5 text-sm text-slate-600">
+                <span class="font-semibold">{{ prescription.dietType }}</span>
+                <div v-if="prescription.allergies.length > 0" class="flex flex-wrap gap-1 mt-1">
+                  <span v-for="allergy in prescription.allergies" :key="allergy" class="bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                    {{ allergy }}
+                  </span>
+                </div>
+              </td>
+              <td class="py-3 px-5 text-sm text-slate-500">Dr. {{ prescription.doctorName.split(' ').pop() }}</td>
+            </tr>
+            <tr v-if="recentPrescriptions.length === 0">
+              <td colspan="4" class="py-8 text-center text-sm text-slate-400">No recent prescriptions</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup>
-
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useDataStore } from '@/stores/dataStore';
 import {
   ClipboardList,
@@ -136,10 +132,10 @@ import {
   AlertTriangle,
   Utensils,
   History,
-  FileText } from
-'lucide-vue-next';
+  FileText } from 'lucide-vue-next';
 
 const dataStore = useDataStore();
+const currentDate = ref(new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
 
 const activePrescriptions = computed(() => {
   return dataStore.prescriptions.filter((p) => p.status === 'Active').length;
@@ -162,7 +158,6 @@ const specialDiets = computed(() => {
 });
 
 const newPrescriptions = computed(() => {
-  // Mock: count prescriptions created in last 24 hours
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   return dataStore.prescriptions.filter((p) =>

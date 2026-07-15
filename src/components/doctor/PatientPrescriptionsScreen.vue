@@ -207,11 +207,14 @@
                   <option value="" disabled>Select an allergen to add</option>
                   <option value="Dairy">Dairy</option>
                   <option value="Eggs">Eggs</option>
+                  <option value="Fish">Fish</option>
                   <option value="Gluten">Gluten</option>
-                  <option value="Nuts">Nuts</option>
+                  <option value="Peanuts">Peanuts</option>
                   <option value="Seafood">Seafood</option>
                   <option value="Shellfish">Shellfish</option>
                   <option value="Soy">Soy</option>
+                  <option value="Tree Nuts">Tree Nuts</option>
+                  <option value="Wheat">Wheat</option>
                 </select>
                 <div v-if="prescriptionForm.allergies.length > 0" class="flex flex-wrap gap-2 mt-2">
                   <span
@@ -962,16 +965,21 @@ function formatRoom(roomString) {
 
 // Diet Type Options
 const dietTypeOptions = [
-'Normal Diet',
-'Soft Diet',
-'Full Liquid Diet',
-'Bland Diet',
-'DM (Diabetic Mellitus) Diet',
-'Low Salt/Low Fat',
-'Low Purine',
-'Carbohydrate',
-'High Protein',
-'High Fiber'];
+  'Normal Diet (Regular Diet)',
+  'Light Diet',
+  'Clear Liquid Diet',
+  'Full Liquid Diet',
+  'Pureed Diet',
+  'Soft Diet (Mechanical Soft Diet)',
+  'Bland Diet',
+  'DM (Diabetic Mellitus) Diet',
+  'Renal Diet',
+  'Low Salt/Low Fat',
+  'Low Purine',
+  'Carbohydrate-Controlled Diet',
+  'High Protein Diet',
+  'High Fiber Diet'
+];
 
 
 function toggleDietType(diet) {

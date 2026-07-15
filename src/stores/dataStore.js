@@ -263,7 +263,7 @@ export const useDataStore = defineStore('data', () => {
     patientName: "Rosa Reyes",
     doctorId: "DOC001",
     doctorName: "Dr. Santos",
-    dietType: "High Protein",
+    dietType: "High Protein Diet",
     allergies: ["Nuts", "Soy"],
     restrictions: ["Low Phosphorus", "Low Potassium", "Fluid Restriction"],
     feedingInstructions: "Limit fluid intake to 1.5 liters per day. Avoid high-potassium foods.",
@@ -278,7 +278,7 @@ export const useDataStore = defineStore('data', () => {
     patientName: "Pedro Bautista",
     doctorId: "DOC001",
     doctorName: "Dr. Santos",
-    dietType: "Soft Diet",
+    dietType: "Soft Diet (Mechanical Soft Diet)",
     allergies: [],
     restrictions: ["Soft Foods Only", "No Spicy Foods", "No Raw Foods"],
     feedingInstructions: "Soft, easily digestible meals only. No solid or hard-to-digest foods.",
@@ -310,11 +310,17 @@ export const useDataStore = defineStore('data', () => {
     patientId: "P001",
     patientName: "Juan Dela Cruz",
     date: "2026-05-25",
-    breakfast: "Oatmeal with Fruits",
-    lunch: "Grilled Chicken with Rice",
-    dinner: "Steamed Fish with Vegetables",
-    breakfastCost: 35,
-    lunchCost: 55,
+    breakfastCarb: "Oatmeal",
+    breakfastProtein: "Boiled Egg",
+    breakfastSide: "Banana",
+    lunchCarb: "White Rice",
+    lunchProtein: "Grilled Chicken",
+    lunchSide: "Papaya",
+    dinnerCarb: "Lugaw",
+    dinnerProtein: "Chicken Tinola",
+    dinnerSide: "Apple",
+    breakfastCost: 15,
+    lunchCost: 45,
     dinnerCost: 55,
     totalCost: 145,
     assignedBy: "Rita Cruz, RND",
@@ -357,9 +363,15 @@ export const useDataStore = defineStore('data', () => {
     patientId: "P003",
     patientName: "Rosa Reyes",
     date: "2026-05-28",
-    breakfast: "lugaw",
-    lunch: "steam beef",
-    dinner: "adobo chimken",
+    breakfastCarb: "Lugaw",
+    breakfastProtein: "Hard Boiled Egg",
+    breakfastSide: "",
+    lunchCarb: "Rice",
+    lunchProtein: "Steamed Beef",
+    lunchSide: "Steamed Carrots",
+    dinnerCarb: "Rice",
+    dinnerProtein: "Chicken Adobo",
+    dinnerSide: "",
     breakfastCost: 10,
     lunchCost: 25,
     dinnerCost: 30,
@@ -377,27 +389,68 @@ export const useDataStore = defineStore('data', () => {
   const mealAssignments = ref(loadFromStorage('mealAssignments', defaultMealAssignments));
 
   const dishes = ref(loadFromStorage('dishes', [
-  { id: 'D001', name: 'Champorado with Tuyo', mealType: 'Breakfast', dietCategories: ['Normal Diet', 'Carbohydrate'], cost: 45, calories: 350, protein: 12, carbs: 65, fat: 8, sodium: 420, description: 'Sweet chocolate rice porridge paired with salted dried fish', allergens: ['Fish', 'Dairy', 'Gluten'] },
-  { id: 'D002', name: 'Soft Boiled Egg and Toast', mealType: 'Breakfast', dietCategories: ['Normal Diet', 'Soft Diet', 'High Protein', 'Bland Diet'], cost: 35, calories: 250, protein: 14, carbs: 25, fat: 10, sodium: 320, description: 'Two soft boiled eggs with lightly toasted white bread', allergens: ['Eggs', 'Gluten'] },
-  { id: 'D003', name: 'Plain Macaroni Soup (Sopas)', mealType: 'Breakfast', dietCategories: ['Normal Diet', 'Soft Diet', 'Full Liquid Diet'], cost: 40, calories: 280, protein: 10, carbs: 35, fat: 8, sodium: 380, description: 'Warm, creamy macaroni soup with tiny vegetable bits', allergens: ['Gluten', 'Dairy'] },
-  { id: 'D004', name: 'Fresh Fruit Platter', mealType: 'Breakfast', dietCategories: ['Normal Diet', 'Soft Diet', 'Low Salt/Low Fat', 'DM (Diabetic Mellitus) Diet', 'High Fiber'], cost: 50, calories: 120, protein: 2, carbs: 28, fat: 0, sodium: 5, description: 'Sliced ripe papaya, banana, and melon', allergens: [] },
-  { id: 'D005', name: 'Baked Salmon with Broccoli', mealType: 'Lunch', dietCategories: ['Normal Diet', 'Low Salt/Low Fat', 'DM (Diabetic Mellitus) Diet', 'High Protein'], cost: 110, calories: 420, protein: 35, carbs: 12, fat: 18, sodium: 150, description: 'Oven-baked salmon fillet served with steamed broccoli florets', allergens: ['Fish'] },
-  { id: 'D006', name: 'Boiled Chicken Breast & Mashed Potato', mealType: 'Lunch', dietCategories: ['Normal Diet', 'Soft Diet', 'Bland Diet', 'Low Salt/Low Fat', 'Low Purine'], cost: 65, calories: 310, protein: 28, carbs: 30, fat: 5, sodium: 110, description: 'Tender boiled chicken breast with plain mashed potato', allergens: [] },
-  { id: 'D007', name: 'Shrimp Sinigang', mealType: 'Lunch', dietCategories: ['Normal Diet', 'High Protein'], cost: 85, calories: 280, protein: 22, carbs: 15, fat: 4, sodium: 520, description: 'Sour tamarind soup with fresh shrimp and vegetables', allergens: ['Shellfish'] },
-  { id: 'D008', name: 'Pinakbet (Mixed Vegetables)', mealType: 'Lunch', dietCategories: ['Normal Diet', 'High Fiber', 'DM (Diabetic Mellitus) Diet'], cost: 55, calories: 180, protein: 8, carbs: 22, fat: 6, sodium: 410, description: 'Local vegetables sauteed in shrimp paste (bagoong)', allergens: ['Fish'] },
-  { id: 'D009', name: 'Grilled Tofu Steak with Rice', mealType: 'Dinner', dietCategories: ['Normal Diet', 'DM (Diabetic Mellitus) Diet', 'Low Purine', 'High Protein'], cost: 50, calories: 320, protein: 18, carbs: 45, fat: 10, sodium: 280, description: 'Thick sliced tofu grilled with light soy glaze', allergens: ['Soy', 'Gluten'] },
-  { id: 'D010', name: 'Beef Mami (Noodle Soup)', mealType: 'Dinner', dietCategories: ['Normal Diet', 'Carbohydrate'], cost: 60, calories: 450, protein: 24, carbs: 55, fat: 14, sodium: 650, description: 'Hot noodle soup with tender beef brisket slices', allergens: ['Gluten', 'Eggs', 'Soy'] },
-  { id: 'D011', name: 'Clear Chicken Broth', mealType: 'Dinner', dietCategories: ['Normal Diet', 'Soft Diet', 'Full Liquid Diet', 'Bland Diet', 'Low Purine'], cost: 25, calories: 80, protein: 4, carbs: 2, fat: 2, sodium: 200, description: 'Strained, clear chicken soup for easy digestion', allergens: [] },
-  { id: 'D012', name: 'Steamed Lapu-Lapu with Ginger', mealType: 'Dinner', dietCategories: ['Normal Diet', 'Soft Diet', 'Low Salt/Low Fat', 'DM (Diabetic Mellitus) Diet', 'Low Purine'], cost: 95, calories: 240, protein: 32, carbs: 5, fat: 6, sodium: 120, description: 'Fresh white fish steamed with ginger and light soy sauce', allergens: ['Fish'] }]
+  { 
+    id: 'D001', name: 'Champorado with Tuyo', mealType: 'Breakfast', componentType: 'Carbohydrate-Controlled Diet', dietCategories: ['Normal Diet (Regular Diet)', 'Carbohydrate-Controlled Diet'], 
+    cost: 45, calories: 350, protein: 12, carbs: 65, fat: 8, sodium: 420, description: 'Sweet chocolate rice porridge paired with salted dried fish', allergens: ['Fish', 'Dairy', 'Gluten'],
+    ingredients: [{ name: 'Rice', qty: 0.1, unit: 'kg' }, { name: 'Milk', qty: 0.05, unit: 'liters' }]
+  },
+  { 
+    id: 'D002', name: 'Soft Boiled Egg', mealType: 'Breakfast', componentType: 'Protein/Viand', dietCategories: ['Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'High Protein Diet', 'Bland Diet'], 
+    cost: 15, calories: 150, protein: 12, carbs: 0, fat: 10, sodium: 120, description: 'Two soft boiled eggs', allergens: ['Eggs'],
+    ingredients: [{ name: 'Eggs', qty: 0.06, unit: 'trays' }] 
+  },
+  { 
+    id: 'D003', name: 'Plain Macaroni Soup (Sopas)', mealType: 'Breakfast', componentType: 'Protein/Viand', dietCategories: ['Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'Full Liquid Diet'], 
+    cost: 40, calories: 280, protein: 10, carbs: 35, fat: 8, sodium: 380, description: 'Warm, creamy macaroni soup with tiny vegetable bits', allergens: ['Gluten', 'Dairy'],
+    ingredients: [{ name: 'Milk', qty: 0.1, unit: 'liters' }, { name: 'Vegetables', qty: 0.05, unit: 'kg' }]
+  },
+  { id: 'D004', name: 'Fresh Fruit Platter', mealType: 'Breakfast', componentType: 'Side/Fruit', dietCategories: ['Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'Low Salt/Low Fat', 'DM (Diabetic Mellitus) Diet', 'High Fiber Diet'], cost: 50, calories: 120, protein: 2, carbs: 28, fat: 0, sodium: 5, description: 'Sliced ripe papaya, banana, and melon', allergens: [] },
+  { id: 'D005', name: 'Baked Salmon with Broccoli', mealType: 'Lunch', componentType: 'Protein/Viand', dietCategories: ['Normal Diet (Regular Diet)', 'Low Salt/Low Fat', 'DM (Diabetic Mellitus) Diet', 'High Protein Diet'], cost: 110, calories: 420, protein: 35, carbs: 12, fat: 18, sodium: 150, description: 'Oven-baked salmon fillet served with steamed broccoli florets', allergens: ['Fish'] },
+  { 
+    id: 'D006', name: 'Boiled Chicken Breast', mealType: 'Lunch', componentType: 'Protein/Viand', dietCategories: ['Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'Bland Diet', 'Low Salt/Low Fat', 'Low Purine'], 
+    cost: 45, calories: 160, protein: 28, carbs: 0, fat: 5, sodium: 110, description: 'Tender boiled chicken breast', allergens: [],
+    ingredients: [{ name: 'Chicken', qty: 0.15, unit: 'kg' }] 
+  },
+  { 
+    id: 'D007', name: 'Shrimp Sinigang', mealType: 'Lunch', componentType: 'Protein/Viand', dietCategories: ['Normal Diet (Regular Diet)', 'High Protein Diet'], 
+    cost: 85, calories: 280, protein: 22, carbs: 15, fat: 4, sodium: 520, description: 'Sour tamarind soup with fresh shrimp and vegetables', allergens: ['Shellfish'],
+    ingredients: [{ name: 'Vegetables', qty: 0.1, unit: 'kg' }] 
+  },
+  { 
+    id: 'D008', name: 'Pinakbet (Mixed Vegetables)', mealType: 'Lunch', componentType: 'Side/Fruit', dietCategories: ['Normal Diet (Regular Diet)', 'High Fiber Diet', 'DM (Diabetic Mellitus) Diet'], 
+    cost: 55, calories: 180, protein: 8, carbs: 22, fat: 6, sodium: 410, description: 'Local vegetables sauteed in shrimp paste (bagoong)', allergens: ['Fish'],
+    ingredients: [{ name: 'Vegetables', qty: 0.15, unit: 'kg' }] 
+  },
+  { 
+    id: 'D009', name: 'Chicken Tinola', mealType: 'Dinner', componentType: 'Protein/Viand', dietCategories: ['Normal Diet (Regular Diet)', 'DM (Diabetic Mellitus) Diet', 'Low Purine', 'High Protein Diet'], 
+    cost: 50, calories: 200, protein: 18, carbs: 15, fat: 10, sodium: 280, description: 'Chicken soup with green papaya and ginger', allergens: [],
+    ingredients: [{ name: 'Chicken', qty: 0.15, unit: 'kg' }, { name: 'Vegetables', qty: 0.1, unit: 'kg' }] 
+  },
+  { id: 'D010', name: 'Beef Mami (Noodle Soup)', mealType: 'Dinner', componentType: 'Protein/Viand', dietCategories: ['Normal Diet (Regular Diet)', 'Carbohydrate-Controlled Diet'], cost: 60, calories: 450, protein: 24, carbs: 55, fat: 14, sodium: 650, description: 'Hot noodle soup with tender beef brisket slices', allergens: ['Gluten', 'Eggs', 'Soy'] },
+  { 
+    id: 'D011', name: 'Clear Chicken Broth', mealType: 'Dinner', componentType: 'Protein/Viand', dietCategories: ['Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'Full Liquid Diet', 'Bland Diet', 'Low Purine'], 
+    cost: 25, calories: 80, protein: 4, carbs: 2, fat: 2, sodium: 200, description: 'Strained, clear chicken soup for easy digestion', allergens: [],
+    ingredients: [{ name: 'Chicken', qty: 0.05, unit: 'kg' }] 
+  },
+  { 
+    id: 'D012', name: 'White Rice (1 Cup)', mealType: 'Lunch', componentType: 'Carbohydrate-Controlled Diet', dietCategories: ['Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'Low Salt/Low Fat', 'Low Purine'], 
+    cost: 15, calories: 200, protein: 4, carbs: 45, fat: 0, sodium: 0, description: 'Steamed white rice', allergens: [],
+    ingredients: [{ name: 'Rice', qty: 0.1, unit: 'kg' }] 
+  },
+  { 
+    id: 'D013', name: 'Rice Porridge (Lugaw)', mealType: 'Breakfast', componentType: 'Carbohydrate-Controlled Diet', dietCategories: ['Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'Full Liquid Diet', 'Bland Diet', 'Low Purine', 'Low Salt/Low Fat'], 
+    cost: 12, calories: 150, protein: 3, carbs: 32, fat: 0, sodium: 10, description: 'Warm rice porridge', allergens: [],
+    ingredients: [{ name: 'Rice', qty: 0.05, unit: 'kg' }] 
+  }]
   ));
 
   const menuCalendar = ref(loadFromStorage('menuCalendar', [
-  { id: 'MC001', date: '2026-05-20', dishId: 'D001', dishName: 'Oatmeal with Fruits', mealType: 'Breakfast', dietCategories: ['DM (Diabetic Mellitus) Diet', 'Normal Diet', 'Soft Diet', 'Low Salt/Low Fat'], cost: 35, calories: 220 },
-  { id: 'MC002', date: '2026-05-20', dishId: 'D005', dishName: 'Grilled Chicken with Rice', mealType: 'Lunch', dietCategories: ['Normal Diet', 'High Protein', 'Low Purine'], cost: 55, calories: 450 },
-  { id: 'MC003', date: '2026-05-20', dishId: 'D009', dishName: 'Chicken Tinola with Rice', mealType: 'Dinner', dietCategories: ['Normal Diet', 'Soft Diet', 'Low Purine'], cost: 50, calories: 400 },
-  { id: 'MC004', date: '2026-05-21', dishId: 'D002', dishName: 'Scrambled Eggs with Toast', mealType: 'Breakfast', dietCategories: ['Normal Diet', 'Soft Diet', 'High Protein'], cost: 40, calories: 310 },
-  { id: 'MC005', date: '2026-05-21', dishId: 'D006', dishName: 'Fish Fillet with Vegetables', mealType: 'Lunch', dietCategories: ['Normal Diet', 'Low Salt/Low Fat', 'DM (Diabetic Mellitus) Diet'], cost: 60, calories: 380 },
-  { id: 'MC006', date: '2026-05-21', dishId: 'D010', dishName: 'Steamed Fish with Vegetables', mealType: 'Dinner', dietCategories: ['Normal Diet', 'Low Salt/Low Fat', 'Soft Diet', 'DM (Diabetic Mellitus) Diet'], cost: 55, calories: 320 }]
+  { id: 'MC001', date: '2026-05-20', dishId: 'D001', dishName: 'Oatmeal with Fruits', mealType: 'Breakfast', dietCategories: ['DM (Diabetic Mellitus) Diet', 'Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'Low Salt/Low Fat'], cost: 35, calories: 220 },
+  { id: 'MC002', date: '2026-05-20', dishId: 'D005', dishName: 'Grilled Chicken with Rice', mealType: 'Lunch', dietCategories: ['Normal Diet (Regular Diet)', 'High Protein Diet', 'Low Purine'], cost: 55, calories: 450 },
+  { id: 'MC003', date: '2026-05-20', dishId: 'D009', dishName: 'Chicken Tinola with Rice', mealType: 'Dinner', dietCategories: ['Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'Low Purine'], cost: 50, calories: 400 },
+  { id: 'MC004', date: '2026-05-21', dishId: 'D002', dishName: 'Scrambled Eggs with Toast', mealType: 'Breakfast', dietCategories: ['Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'High Protein Diet'], cost: 40, calories: 310 },
+  { id: 'MC005', date: '2026-05-21', dishId: 'D006', dishName: 'Fish Fillet with Vegetables', mealType: 'Lunch', dietCategories: ['Normal Diet (Regular Diet)', 'Low Salt/Low Fat', 'DM (Diabetic Mellitus) Diet'], cost: 60, calories: 380 },
+  { id: 'MC006', date: '2026-05-21', dishId: 'D010', dishName: 'Steamed Fish with Vegetables', mealType: 'Dinner', dietCategories: ['Normal Diet (Regular Diet)', 'Low Salt/Low Fat', 'Soft Diet (Mechanical Soft Diet)', 'DM (Diabetic Mellitus) Diet'], cost: 55, calories: 320 }]
   ));
 
   const notifications = ref(loadFromStorage('notifications', [
@@ -594,6 +647,121 @@ export const useDataStore = defineStore('data', () => {
     saveToStorage('dishes', dishes.value);
   }
 
+  // --- INVENTORY STATE ---
+  const defaultInventory = [
+    { id: 'INV001', name: 'Rice', type: 'Non-Perishable', quantity: 15, unit: 'kg', location: 'Pantry', status: 'Low Stock', reorderLevel: 20, unitPrice: 50 },
+    { id: 'INV002', name: 'Chicken', type: 'Perishable', quantity: 8, unit: 'kg', location: 'Refrigerator', status: 'Low Stock', reorderLevel: 10, unitPrice: 180 },
+    { id: 'INV003', name: 'Vegetables', type: 'Perishable', quantity: 45, unit: 'kg', location: 'Refrigerator', status: 'In Stock', reorderLevel: 15, unitPrice: 60 },
+    { id: 'INV004', name: 'Cooking Oil', type: 'Non-Perishable', quantity: 22, unit: 'liters', location: 'Pantry', status: 'In Stock', reorderLevel: 10, unitPrice: 120 },
+    { id: 'INV005', name: 'Eggs', type: 'Perishable', quantity: 5, unit: 'trays', location: 'Refrigerator', status: 'Low Stock', reorderLevel: 8, unitPrice: 220 },
+    { id: 'INV006', name: 'Butter', type: 'Perishable', quantity: 12, unit: 'kg', location: 'Refrigerator', status: 'In Stock', reorderLevel: 5, unitPrice: 300 },
+    { id: 'INV007', name: 'Milk', type: 'Perishable', quantity: 15, unit: 'liters', location: 'Refrigerator', status: 'In Stock', reorderLevel: 8, unitPrice: 95 },
+    { id: 'INV008', name: 'Potatoes', type: 'Perishable', quantity: 30, unit: 'kg', location: 'Pantry', status: 'In Stock', reorderLevel: 10, unitPrice: 75 }
+  ];
+
+  const defaultStockMovementLogs = [
+    { id: 'SML001', timestamp: '2026-03-03T10:30:00', itemName: 'Rice', action: 'Stock In', quantity: 100, reference: 'PO-2026-001', performedBy: 'Mario Perez', unitPrice: 50, totalCost: 5000 },
+    { id: 'SML002', timestamp: '2026-03-02T14:15:00', itemName: 'Chicken', action: 'Deduction', quantity: 5, reference: 'DIST-2026-045', performedBy: 'Linda Santos', unitPrice: 180, totalCost: 900 }
+  ];
+
+  const inventory = ref(loadFromStorage('inventory', defaultInventory));
+  const stockMovementLogs = ref(loadFromStorage('stockMovementLogs', defaultStockMovementLogs));
+
+  function addStockIn(item) {
+    const qty = parseFloat(item.quantity);
+    const addedCost = item.cost ? parseFloat(item.cost) : 0;
+    const addedUnitPrice = addedCost > 0 && qty > 0 ? (addedCost / qty) : 0;
+    
+    let finalUnitPrice = addedUnitPrice;
+
+    const existing = inventory.value.find(
+      (i) => i.name.toLowerCase() === item.name.toLowerCase()
+    );
+
+    if (existing) {
+      // Moving Average Unit Price Calculation
+      const currentQty = existing.quantity || 0;
+      const currentUnitPrice = existing.unitPrice || 0;
+      
+      if (currentQty + qty > 0) {
+        finalUnitPrice = ((currentQty * currentUnitPrice) + addedCost) / (currentQty + qty);
+      }
+      
+      existing.quantity += qty;
+      existing.unitPrice = finalUnitPrice;
+      existing.status = existing.quantity <= existing.reorderLevel ? 'Low Stock' : 'In Stock';
+      if (item.unit) existing.unit = item.unit;
+      if (item.location) existing.location = item.location;
+      if (item.type) existing.type = item.type;
+    } else {
+      const newItem = {
+        id: `INV${Date.now()}`,
+        name: item.name,
+        type: item.type || 'Perishable',
+        quantity: qty,
+        unitPrice: finalUnitPrice,
+        unit: item.unit || 'kg',
+        location: item.location || 'Pantry',
+        reorderLevel: item.type === 'Perishable' ? 10 : 20,
+        status: 'In Stock'
+      };
+      newItem.status = newItem.quantity <= newItem.reorderLevel ? 'Low Stock' : 'In Stock';
+      inventory.value.push(newItem);
+    }
+
+    stockMovementLogs.value.unshift({
+      id: `SML${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      itemName: item.name,
+      action: 'Stock In',
+      quantity: qty,
+      unitPrice: addedUnitPrice,
+      totalCost: addedCost,
+      reference: `PO-2026-${Math.floor(100 + Math.random() * 900)}`,
+      performedBy: 'Mario Perez'
+    });
+
+    saveToStorage('inventory', inventory.value);
+    saveToStorage('stockMovementLogs', stockMovementLogs.value);
+  }
+
+  function deductStock(itemName, quantity) {
+    const existing = inventory.value.find(
+      (i) => i.name.toLowerCase() === itemName.toLowerCase()
+    );
+    
+    let deductedValue = 0;
+    let currentUnitPrice = 0;
+
+    if (existing) {
+      currentUnitPrice = existing.unitPrice || 0;
+      const deductQty = parseFloat(quantity);
+      
+      existing.quantity = Math.max(0, existing.quantity - deductQty);
+      existing.status = existing.quantity <= existing.reorderLevel ? 'Low Stock' : 'In Stock';
+      if (existing.quantity === 0) {
+        existing.status = 'Out of Stock';
+      }
+      
+      deductedValue = deductQty * currentUnitPrice;
+    }
+
+    stockMovementLogs.value.unshift({
+      id: `SML${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      itemName: itemName,
+      action: 'Deduction',
+      quantity: parseFloat(quantity),
+      unitPrice: currentUnitPrice,
+      totalCost: deductedValue,
+      reference: `DIST-2026-${Math.floor(100 + Math.random() * 900)}`,
+      performedBy: 'Linda Santos'
+    });
+
+    saveToStorage('inventory', inventory.value);
+    saveToStorage('stockMovementLogs', stockMovementLogs.value);
+  }
+
   return {
     patients,
     dishes,
@@ -604,6 +772,8 @@ export const useDataStore = defineStore('data', () => {
     backflushHistory,
     users,
     activityLogs,
+    inventory,
+    stockMovementLogs,
     addPatient,
     updatePatient,
     addDish,
@@ -618,6 +788,8 @@ export const useDataStore = defineStore('data', () => {
     addBackflushHistory,
     addUser,
     updateUser,
-    addActivityLog
+    addActivityLog,
+    addStockIn,
+    deductStock
   };
 });

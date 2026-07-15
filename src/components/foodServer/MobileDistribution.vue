@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="space-y-6">
     <!-- Camera Modal -->
     <div v-if="cameraOpen && !scannedRoom" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
@@ -88,6 +88,7 @@
 
             <div>
               <label class="text-sm text-gray-500 font-semibold">Diet Prescription</label>
+              <br>
               <span class="inline-block mt-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">{{ scannedRoom.diet }}</span>
             </div>
 
@@ -97,6 +98,28 @@
                 <span class="text-gray-400">●</span>
                 <span>{{ scannedRoom.allergies }}</span>
               </div>
+            </div>
+
+            <!-- Assigned Meal Components -->
+            <div v-if="scannedMeal" class="mt-4 pt-4 border-t border-gray-100">
+              <label class="text-sm text-teal-700 font-bold uppercase tracking-wider mb-2 block">Assigned Tray Components</label>
+              <div class="space-y-3">
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
+                  <span class="text-xs font-semibold text-gray-500 uppercase">🌾 Carb</span>
+                  <span class="font-bold text-gray-800">{{ scannedMeal.lunchCarb || scannedMeal.breakfastCarb || scannedMeal.dinnerCarb || 'None' }}</span>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
+                  <span class="text-xs font-semibold text-gray-500 uppercase">🍗 Viand</span>
+                  <span class="font-bold text-gray-800">{{ scannedMeal.lunchProtein || scannedMeal.breakfastProtein || scannedMeal.dinnerProtein || 'None' }}</span>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
+                  <span class="text-xs font-semibold text-gray-500 uppercase">🍎 Side/Fruit</span>
+                  <span class="font-bold text-gray-800">{{ scannedMeal.lunchSide || scannedMeal.breakfastSide || scannedMeal.dinnerSide || 'None' }}</span>
+                </div>
+              </div>
+            </div>
+            <div v-else class="mt-4 pt-4 border-t border-gray-100 text-amber-600 font-semibold text-sm">
+              ⚠️ No meal assigned for this patient today.
             </div>
           </div>
         </div>
@@ -136,9 +159,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { QrCode, Smartphone, X, Info, CheckCircle2 } from 'lucide-vue-next';
+import { useDataStore } from '@/stores/dataStore';
 
+const dataStore = useDataStore();
 const cameraOpen = ref(false);
 const videoElement = ref(null);
 const scannedRoom = ref(null);
@@ -146,35 +171,13 @@ const lastScannedIndex = ref(-1);
 const handheldMode = ref(false);
 const handheldServed = ref(new Set());
 
-const sampleRooms = {
-  103: {
-    room: 103,
-    patientName: 'Rosa Mercado',
-    patientCount: 1,
-    bed: 'Bed 3',
-    diagnosis: 'Gastroenteritis',
-    diet: 'Normal Diet',
-    allergies: 'No known allergies'
-  },
-  102: {
-    room: 102,
-    patientName: 'Juan dela Cruz',
-    patientCount: 1,
-    bed: 'Bed 2',
-    diagnosis: 'Diabetes Mellitus',
-    diet: 'DM (Diabetic Mellitus) Diet',
-    allergies: 'Shellfish'
-  },
-  104: {
-    room: 104,
-    patientName: 'Pedro Reyes',
-    patientCount: 1,
-    bed: 'Bed 4',
-    diagnosis: 'Hypertension',
-    diet: 'Low Sodium Diet',
-    allergies: 'No known allergies'
-  }
-};
+// We will dynamically pull from dataStore in simulateScan
+
+const scannedMeal = computed(() => {
+  if (!scannedRoom.value) return null;
+  const today = new Date().toISOString().split('T')[0];
+  return dataStore.mealAssignments.find(m => m.patientId === scannedRoom.value.id && m.date === today);
+});
 
 async function openCamera() {
   cameraOpen.value = true;
@@ -199,11 +202,37 @@ async function openCamera() {
 }
 
 function simulateScan() {
-  // cycle to next room in sampleRooms
-  const rooms = Object.keys(sampleRooms).map(Number);
-  lastScannedIndex.value = (lastScannedIndex.value + 1) % rooms.length;
-  const nextRoom = rooms[lastScannedIndex.value];
-  scannedRoom.value = sampleRooms[nextRoom];
+  const today = new Date().toISOString().split('T')[0];
+  // Find patients that have meal assignments today
+  const patientsWithMeals = dataStore.patients.filter(p => 
+    dataStore.mealAssignments.some(m => m.patientId === p.id && m.date === today)
+  );
+  
+  if (patientsWithMeals.length === 0) {
+    alert("No patients have meal assignments for today. Please assign meals in the Dietitian portal first.");
+    closeCamera();
+    return;
+  }
+
+  // Cycle through the patients
+  lastScannedIndex.value = (lastScannedIndex.value + 1) % patientsWithMeals.length;
+  const patient = patientsWithMeals[lastScannedIndex.value];
+  
+  // Find their prescription to get diet and allergies
+  const rx = dataStore.prescriptions
+    .filter(p => p.patientId === patient.id)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+  scannedRoom.value = {
+    id: patient.id,
+    room: patient.room,
+    patientName: patient.name,
+    patientCount: 1,
+    diagnosis: patient.condition || 'Not specified',
+    diet: rx ? rx.dietType : 'Normal Diet (Regular Diet)',
+    allergies: patient.allergies ? patient.allergies : (rx && rx.allergies.length > 0 ? rx.allergies.join(', ') : 'No known allergies')
+  };
+  
   closeCamera();
 }
 

@@ -1,143 +1,126 @@
 <template>
-  <div class="space-y-6">
-    <!-- Greeting Banner -->
-    <div class="bg-[#2563eb] rounded-xl p-6 md:p-8 text-white relative overflow-hidden shadow-sm">
-      <div class="flex items-center space-x-2 mb-2 relative z-10">
-        <Sparkles class="text-yellow-300 w-5 h-5 md:w-6 md:h-6" />
-        <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">Good afternoon, {{ authStore.currentUser?.name || 'Dr. Santos' }}!</h2>
+  <div class="space-y-6 w-full max-w-full overflow-x-hidden pb-8">
+    
+    <!-- Zone 1: Top Context Header -->
+    <div class="w-full rounded-2xl shadow-sm px-6 py-8 flex justify-between items-center text-white mb-6 bg-gradient-to-r from-blue-600 to-blue-500">
+      <div>
+        <h2 class="text-2xl font-semibold tracking-tight">Welcome, {{ authStore.currentUser?.name || 'Dr. Santos' }}!</h2>
+        <p class="text-blue-50 text-sm mt-1">Global Status: Active</p>
       </div>
-      <p class="text-blue-100 mb-5 md:mb-6 text-sm relative z-10">You have {{ activePrescriptions }} patients waiting for diet prescriptions.</p>
-      <div class="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-8 text-sm font-medium relative z-10">
-        <div class="flex items-center space-x-2">
-          <Users :size="16" />
-          <span>{{ myPatients }} Active Patients</span>
-        </div>
-        <div class="flex items-center space-x-2">
-          <Clock :size="16" />
-          <span>{{ activePrescriptions }} Pending Prescriptions</span>
-        </div>
-      </div>
-      <!-- Subtle background decoration -->
-      <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4"></div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-[#fffbeb] rounded-xl p-6 border border-[#fef3c7] shadow-sm relative overflow-hidden">
-        <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mb-4">
-          <Clock :size="18" class="text-yellow-600" />
-        </div>
-        <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ activePrescriptions }}</h3>
-        <p class="text-sm font-semibold text-gray-800">Pending Prescriptions</p>
-        <p class="text-xs text-gray-500">Awaiting diet orders</p>
-      </div>
-
-      <div class="bg-[#eff6ff] rounded-xl p-6 border border-[#dbeafe] shadow-sm relative overflow-hidden">
-        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-          <Users :size="18" class="text-blue-600" />
-        </div>
-        <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ myPatients }}</h3>
-        <p class="text-sm font-semibold text-gray-800">Total Patients</p>
-        <p class="text-xs text-gray-500">Currently admitted</p>
-      </div>
-
-      <div class="bg-[#f0fdf4] rounded-xl p-6 border border-[#dcfce7] shadow-sm relative overflow-hidden">
-        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mb-4">
-          <CheckCircle :size="18" class="text-green-600" />
-        </div>
-        <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ prescribedPatients }}</h3>
-        <p class="text-sm font-semibold text-gray-800">Prescribed Patients</p>
-        <p class="text-xs text-gray-500">With diet plans</p>
+      <div class="text-right hidden sm:block">
+        <p class="font-medium">{{ currentDate }}</p>
       </div>
     </div>
 
-    <!-- Middle Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- Recently Added Patients -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-center space-x-2 mb-6">
-          <TrendingUp :size="20" class="text-blue-600" />
-          <h2 class="text-md font-bold text-gray-800">Recently Added Patients</h2>
-        </div>
-
-        <div class="space-y-0">
-          <div
-            v-for="patient in recentPatients"
-            :key="patient.id"
-            class="py-4 border-b border-gray-50 last:border-0 flex items-center justify-between"
-          >
-            <div>
-              <h4 class="font-bold text-gray-800 text-sm">{{ patient.name }}</h4>
-              <p class="text-xs text-gray-500 mt-0.5">Room {{ patient.room }} - {{ patient.condition }}</p>
-            </div>
-            <div class="text-xs text-gray-400">
-              {{ formatDate(patient.admissionDate) }}
-            </div>
+    <!-- Zone 2: KPI & Census Metric Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+      
+      <!-- Card 1: Pending Action Alert -->
+      <div class="bg-amber-50 rounded-xl shadow-sm border border-amber-200 p-5 flex flex-col justify-center">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-sm font-semibold text-amber-700 uppercase tracking-wider flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span>Pending Action Alert</span>
+          </p>
+          <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+            <AlertCircle :size="20" />
           </div>
-          <div v-if="recentPatients.length === 0" class="text-sm text-gray-500 text-center py-4">
+        </div>
+        <h3 class="text-2xl font-bold text-amber-900 mb-1">{{ activePrescriptions }}</h3>
+        <p class="text-sm text-amber-800">Patients Awaiting Diet Orders</p>
+      </div>
+
+      <!-- Card 2: Total Assigned Patients -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 flex flex-col justify-center">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Total Assigned Patients</p>
+            <h3 class="text-3xl font-bold text-slate-800">{{ myPatients }}</h3>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+            <Users :size="24" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Prescribed Patients -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 flex flex-col justify-center">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Prescribed Patients</p>
+            <h3 class="text-3xl font-bold text-slate-800">{{ prescribedPatients }}</h3>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+            <CheckCircle :size="24" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Zone 3: Quick Actions Row -->
+    <div class="flex flex-wrap gap-4 mt-6">
+      <button @click="$emit('navigate', 'patients')" class="px-5 py-2.5 rounded-lg text-white font-medium shadow-sm hover:shadow-md transition-all active:scale-95 bg-blue-600 hover:bg-blue-700 flex items-center space-x-2">
+        <FileText :size="18" />
+        <span>Issue New Prescription</span>
+      </button>
+      <button class="px-5 py-2.5 rounded-lg font-medium shadow-sm hover:shadow-md transition-all active:scale-95 bg-white border border-blue-600 text-blue-700 hover:bg-blue-50 flex items-center space-x-2">
+        <Search :size="18" />
+        <span>Search Patient Directory</span>
+      </button>
+    </div>
+
+    <!-- Zone 4: Primary Content Grid Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+      
+      <!-- Left Column: Recently Added Patients -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
+        <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Recently Added Patients</h3>
+        <div class="space-y-4 flex-1">
+          <div v-for="patient in recentPatients" :key="patient.id" class="flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-slate-800 text-sm">{{ patient.name }}</h4>
+              <p class="text-xs text-slate-500 mt-0.5">Room {{ patient.room }} - {{ patient.condition }}</p>
+            </div>
+            <button @click="$emit('navigate', 'patients')" class="text-blue-600 text-xs font-semibold hover:underline bg-blue-50 px-3 py-1.5 rounded-md">
+              + Prescription
+            </button>
+          </div>
+          <div v-if="recentPatients.length === 0" class="text-sm text-slate-500 text-center py-4">
             No recently added patients
           </div>
         </div>
       </div>
 
-      <!-- Pending Prescriptions -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-center space-x-2 mb-6">
-          <Clock :size="20" class="text-yellow-500" />
-          <h2 class="text-md font-bold text-gray-800">Pending Prescriptions</h2>
-        </div>
-
-        <div class="space-y-3">
-          <div
-            v-for="patient in pendingPatients"
-            :key="patient.id"
-            class="p-4 bg-[#fffdf0] border-l-4 border-l-yellow-400 rounded-r-lg flex items-center justify-between shadow-sm"
-          >
+      <!-- Right Column: Pending Prescriptions -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
+        <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3 flex items-center">
+          <Clock :size="18" class="text-amber-500 mr-2" />
+          Pending Prescriptions
+        </h3>
+        <div class="space-y-3 flex-1">
+          <div v-for="patient in pendingPatients" :key="patient.id" class="p-4 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-between">
             <div>
-              <h4 class="font-bold text-gray-800 text-sm">{{ patient.name }}</h4>
-              <p class="text-xs text-gray-500 mt-0.5">Room {{ patient.room }} - {{ patient.condition }}</p>
+              <h4 class="font-bold text-slate-800 text-sm">{{ patient.name }}</h4>
+              <p class="text-xs text-slate-500 mt-0.5">Room {{ patient.room }} - {{ patient.condition }}</p>
             </div>
-            <div class="text-[11px] font-bold text-yellow-600">
-              No Prescription
+            <div class="text-xs font-bold text-amber-600 bg-amber-100 px-2 py-1 rounded">
+              Needs Order
             </div>
           </div>
-          <div v-if="pendingPatients.length === 0" class="text-sm text-gray-500 text-center py-4">
+          <div v-if="pendingPatients.length === 0" class="text-sm text-slate-500 text-center py-4">
             All caught up! No pending prescriptions.
           </div>
         </div>
       </div>
+
     </div>
 
-    <!-- Quick Actions -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <h2 class="text-md font-bold text-gray-800 mb-4">Quick Actions</h2>
-      <div class="max-w-md">
-        <button
-          @click="$emit('navigate', 'patients')"
-          class="w-full text-left p-5 rounded-xl border border-blue-100 hover:border-blue-300 hover:shadow-md transition-all group bg-[#f8fafc]"
-        >
-          <div class="flex items-start space-x-4">
-            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-              <FileText :size="20" />
-            </div>
-            <div>
-              <h3 class="font-bold text-gray-800 text-sm mb-1">Diet Prescriptions</h3>
-              <p class="text-xs text-gray-500 mb-3">Manage patient diet prescriptions and medical nutrition order</p>
-              <span class="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-700 text-[10px] font-bold rounded-md">
-                <Clock :size="10" class="mr-1" />
-                {{ activePrescriptions }} pending
-              </span>
-            </div>
-          </div>
-        </button>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useDataStore } from '@/stores/dataStore';
 import { useAuthStore } from '@/stores/authStore';
 import {
@@ -146,11 +129,13 @@ import {
   Sparkles,
   CheckCircle,
   TrendingUp,
-  FileText } from
-'lucide-vue-next';
+  FileText,
+  AlertCircle,
+  Search } from 'lucide-vue-next';
 
 const dataStore = useDataStore();
 const authStore = useAuthStore();
+const currentDate = ref(new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
 
 const myPatients = computed(() => {
   const currentDoc = authStore.currentUser?.name || 'Dr. Santos';
@@ -159,11 +144,9 @@ const myPatients = computed(() => {
 
 const pendingPatients = computed(() => {
   const currentDoc = authStore.currentUser?.name || 'Dr. Santos';
-  // Patients who are active, assigned to this doctor, and don't have an active prescription
   return dataStore.patients.filter((p) => {
     if (p.status !== 'Active') return false;
     if (p.physician !== currentDoc) return false;
-
     const hasActivePrescription = dataStore.prescriptions.some(
       (rx) => rx.patientId === p.id && rx.status === 'Active'
     );

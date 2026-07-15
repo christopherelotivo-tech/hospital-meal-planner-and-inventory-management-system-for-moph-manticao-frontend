@@ -26,7 +26,7 @@
           :title="!desktopSidebarOpen ? item.label : ''"
         >
           <component :is="item.icon" :size="20" class="shrink-0" />
-          <span v-if="desktopSidebarOpen" class="font-candal">{{ item.label }}</span>
+          <span v-if="desktopSidebarOpen" class="font-bold text-[13px] whitespace-normal leading-tight tracking-wide">{{ item.label }}</span>
         </button>
       </nav>
     </template>
