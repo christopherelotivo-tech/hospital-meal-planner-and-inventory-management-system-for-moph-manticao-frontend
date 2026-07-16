@@ -59,7 +59,30 @@
 
     <!-- Top Bar Right -->
     <template #topbar-right>
-      <NotificationBell role="Food Server" color="cyan" />
+      <div class="flex items-center space-x-4">
+        <NotificationBell role="Food Server" color="cyan" class="hidden md:block" />
+        <div class="relative profile-dropdown-container hidden md:block">
+          <button @click="profileMenuOpen = !profileMenuOpen" class="flex items-center space-x-4 focus:outline-none hover:bg-gray-50 p-1.5 rounded-lg transition-colors">
+            <div class="text-right hidden sm:block">
+              <p class="font-dm-serif text-sm font-bold text-gray-800 leading-tight">{{ authStore.currentUser?.name || 'Food Server' }}</p>
+              <p class="font-dm-mono text-xs text-gray-500">Food Server</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-10 h-10 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden flex-shrink-0 font-bold">
+                {{ getInitials(authStore.currentUser?.name) }}
+              </div>
+              <ChevronDown :size="16" class="text-gray-400 transition-transform duration-200" :class="{'rotate-180': profileMenuOpen}" />
+            </div>
+          </button>
+          
+          <div v-if="profileMenuOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 z-50">
+            <button @click="handleLogout" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2 font-medium rounded-xl">
+              <LogOut :size="18" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </template>
 
     <!-- Mobile Topbar Right -->
@@ -99,7 +122,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
-import { List, Smartphone, LogOut } from 'lucide-vue-next';
+import { List, Smartphone, LogOut, ChevronDown } from 'lucide-vue-next';
 import BasePortalLayout from '@/components/layout/BasePortalLayout.vue';
 import NotificationBell from '@/components/NotificationBell.vue';
 import DistributionList from '@/components/foodServer/DistributionList.vue';
@@ -108,8 +131,14 @@ import MobileDistribution from '@/components/foodServer/MobileDistribution.vue';
 const router = useRouter();
 const authStore = useAuthStore();
 const layoutRef = ref(null);
+const profileMenuOpen = ref(false);
 
 const currentModule = ref('list');
+
+function getInitials(name) {
+  if (!name) return 'FS';
+  return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+}
 
 const menuItems = [
   { id: 'list', label: 'Distribution List', icon: List },

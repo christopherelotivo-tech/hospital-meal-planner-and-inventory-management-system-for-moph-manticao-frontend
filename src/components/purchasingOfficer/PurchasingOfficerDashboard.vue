@@ -71,9 +71,9 @@
         <Search class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" :size="18" />
         <input type="text" v-model="searchQuery" placeholder="Search Inventory..." class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none text-sm text-slate-700 shadow-sm transition-all bg-white" />
       </div>
-      <button @click="showStockInModal = true" class="px-6 py-2.5 rounded-lg text-white font-medium shadow-sm hover:shadow-md transition-all active:scale-95 bg-orange-600 hover:bg-orange-700 flex items-center space-x-2">
+      <button @click="showStockInModal = true" class="px-6 py-2.5 rounded-lg text-white font-medium shadow-sm hover:shadow-md transition-all active:scale-95 bg-slate-600 hover:bg-slate-700 flex items-center space-x-2">
         <Plus :size="18" />
-        <span>Log Market Purchases (+ Stock In)</span>
+        <span>Manual Stock Adjustment</span>
       </button>
     </div>
 
@@ -173,10 +173,10 @@
     <div v-if="showStockInModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg flex flex-col overflow-hidden">
         <!-- header -->
-        <div class="bg-gradient-to-r from-orange-600 to-orange-500 text-white p-5 flex items-center justify-between shrink-0">
+        <div class="bg-gradient-to-r from-slate-700 to-slate-600 text-white p-5 flex items-center justify-between shrink-0">
           <div class="flex items-center space-x-2">
             <Package :size="24" />
-            <h3 class="text-xl font-bold">Stock In</h3>
+            <h3 class="text-xl font-bold">Manual Stock Adjustment</h3>
           </div>
           <button @click="showStockInModal = false" class="text-white hover:text-orange-100 transition-colors p-1 bg-white/10 rounded-lg">
             <X :size="20" />
@@ -245,8 +245,8 @@
             <button type="button" @click="showStockInModal = false" class="px-6 py-2.5 text-slate-700 font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-sm text-sm">
               Cancel
             </button>
-            <button type="submit" class="px-6 py-2.5 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-colors shadow-sm text-sm">
-              Record Stock In
+            <button type="submit" class="px-6 py-2.5 bg-slate-700 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors shadow-sm text-sm">
+              Apply Adjustment
             </button>
           </div>
         </form>

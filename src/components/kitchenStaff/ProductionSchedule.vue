@@ -72,10 +72,6 @@
         <Printer :size="18" />
         <span>Print Kitchen Prep Sheet</span>
       </button>
-      <button class="px-5 py-2.5 rounded-lg font-medium shadow-sm hover:shadow-md transition-all active:scale-95 bg-white border border-orange-600 text-orange-700 hover:bg-orange-50 flex items-center space-x-2">
-        <ChefHat :size="18" />
-        <span>View Master Recipes Matrix</span>
-      </button>
     </div>
 
     <!-- Zone 4: Primary Content Grid Workspace -->
@@ -104,8 +100,8 @@
             <div class="flex items-center space-x-4">
               <div class="w-6 h-6 rounded border-2 border-slate-300 flex items-center justify-center group-hover:border-orange-500 transition-colors"></div>
               <div>
-                <h4 class="font-bold text-slate-800">Scrambled Eggs</h4>
-                <p class="text-sm text-purple-600 font-medium">DM (Diabetic Mellitus) Diet</p>
+                <h4 class="font-bold text-slate-800">Breakfast Preparation</h4>
+                <p class="text-sm text-purple-600 font-medium">All Diets (Regular, DM, etc.)</p>
               </div>
             </div>
             <span class="text-sm font-semibold text-slate-500">{{ breakfastCount }} Servings</span>
@@ -118,7 +114,7 @@
               </div>
               <div>
                 <div class="flex items-center space-x-2">
-                  <h4 class="font-bold line-through text-slate-500">Scrambled Eggs</h4>
+                  <h4 class="font-bold line-through text-slate-500">Breakfast Preparation</h4>
                   <span class="text-[10px] bg-green-200 text-green-800 px-2 py-0.5 rounded uppercase font-bold">Done</span>
                 </div>
                 <p class="text-sm text-slate-500 mt-0.5">Completed at {{ breakfastTime }}</p>
@@ -162,8 +158,8 @@
             <div class="flex items-center space-x-4">
               <div class="w-6 h-6 rounded border-2 border-slate-300 flex items-center justify-center group-hover:border-blue-500 transition-colors"></div>
               <div>
-                <h4 class="font-bold text-slate-800">Vegetable Soup</h4>
-                <p class="text-sm text-purple-600 font-medium">DM (Diabetic Mellitus) Diet</p>
+                <h4 class="font-bold text-slate-800">Lunch Preparation</h4>
+                <p class="text-sm text-purple-600 font-medium">All Diets (Regular, DM, etc.)</p>
               </div>
             </div>
             <span class="text-sm font-semibold text-slate-500">{{ lunchCount }} Servings</span>
@@ -176,7 +172,7 @@
               </div>
               <div>
                 <div class="flex items-center space-x-2">
-                  <h4 class="font-bold line-through text-slate-500">Vegetable Soup</h4>
+                  <h4 class="font-bold line-through text-slate-500">Lunch Preparation</h4>
                   <span class="text-[10px] bg-green-200 text-green-800 px-2 py-0.5 rounded uppercase font-bold">Done</span>
                 </div>
                 <p class="text-sm text-slate-500 mt-0.5">Completed at {{ lunchTime }}</p>
@@ -220,8 +216,8 @@
             <div class="flex items-center space-x-4">
               <div class="w-6 h-6 rounded border-2 border-slate-300 flex items-center justify-center group-hover:border-red-500 transition-colors"></div>
               <div>
-                <h4 class="font-bold text-slate-800">Chicken Stew</h4>
-                <p class="text-sm text-purple-600 font-medium">Regular Diet</p>
+                <h4 class="font-bold text-slate-800">Dinner Preparation</h4>
+                <p class="text-sm text-purple-600 font-medium">All Diets (Regular, DM, etc.)</p>
               </div>
             </div>
             <span class="text-sm font-semibold text-slate-500">{{ dinnerCount }} Servings</span>
@@ -234,7 +230,7 @@
               </div>
               <div>
                 <div class="flex items-center space-x-2">
-                  <h4 class="font-bold line-through text-slate-500">Chicken Stew</h4>
+                  <h4 class="font-bold line-through text-slate-500">Dinner Preparation</h4>
                   <span class="text-[10px] bg-green-200 text-green-800 px-2 py-0.5 rounded uppercase font-bold">Done</span>
                 </div>
                 <p class="text-sm text-slate-500 mt-0.5">Completed at {{ dinnerTime }}</p>
@@ -270,8 +266,35 @@
           </div>
           
           <div class="p-6 bg-white flex-1 overflow-y-auto max-h-[60vh]">
+            <!-- Menu / Dish Checklist -->
+            <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-2 mt-2">
+              <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Menu Cooking Checklist</h3>
+              <span class="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded">{{ aggregatedDishes.length }} Dishes to Cook</span>
+            </div>
+            
+            <div v-if="aggregatedDishes.length > 0" class="space-y-2 mb-8">
+              <div v-for="(dish, idx) in aggregatedDishes" :key="'dish'+idx" class="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-white shadow-sm hover:border-blue-200 transition-colors">
+                <div class="flex items-center space-x-3">
+                  <div class="w-5 h-5 rounded border-2 border-gray-300"></div>
+                  <div>
+                    <span class="font-bold text-gray-800 text-sm block">{{ dish.name }}</span>
+                    <span class="text-xs text-blue-600 font-semibold uppercase">{{ dish.meal }}</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="font-bold text-lg text-gray-900">{{ dish.totalServings.toFixed(1) }}</span>
+                  <span class="text-gray-500 text-xs ml-1 font-semibold uppercase tracking-wider">Servings</span>
+                </div>
+              </div>
+            </div>
+            
+            <div v-else class="text-center py-6 border border-dashed border-gray-200 rounded-lg mb-8">
+              <p class="text-sm text-gray-500">No dishes assigned yet.</p>
+            </div>
+
+            <!-- Ingredient Pull Checklist -->
             <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-2">
-              <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Ingredient Pull Checklist</h3>
+              <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Ingredient Pull Checklist (Pantry)</h3>
               <span class="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded">{{ totalPatientsToPrep }} Patients</span>
             </div>
             
@@ -481,24 +504,72 @@ const todaysAssignments = computed(() => {
 
 const totalPatientsToPrep = computed(() => todaysAssignments.value.length);
 
+const aggregatedDishes = computed(() => {
+  const map = {};
+  
+  todaysAssignments.value.forEach(assignment => {
+    const dishes = [];
+    if (!breakfastCompleted.value) {
+      dishes.push({ name: assignment.breakfastCarb, portion: assignment.breakfastPortion || 1.0, meal: 'Breakfast' });
+      dishes.push({ name: assignment.breakfastProtein, portion: assignment.breakfastPortion || 1.0, meal: 'Breakfast' });
+      dishes.push({ name: assignment.breakfastSide, portion: assignment.breakfastPortion || 1.0, meal: 'Breakfast' });
+    }
+    if (!lunchCompleted.value) {
+      dishes.push({ name: assignment.lunchCarb, portion: assignment.lunchPortion || 1.0, meal: 'Lunch' });
+      dishes.push({ name: assignment.lunchProtein, portion: assignment.lunchPortion || 1.0, meal: 'Lunch' });
+      dishes.push({ name: assignment.lunchSide, portion: assignment.lunchPortion || 1.0, meal: 'Lunch' });
+    }
+    if (!dinnerCompleted.value) {
+      dishes.push({ name: assignment.dinnerCarb, portion: assignment.dinnerPortion || 1.0, meal: 'Dinner' });
+      dishes.push({ name: assignment.dinnerProtein, portion: assignment.dinnerPortion || 1.0, meal: 'Dinner' });
+      dishes.push({ name: assignment.dinnerSide, portion: assignment.dinnerPortion || 1.0, meal: 'Dinner' });
+    }
+    const validDishes = dishes.filter(d => d.name);
+    
+    validDishes.forEach(item => {
+      const key = `${item.name}_${item.meal}`;
+      if (!map[key]) {
+        map[key] = {
+          name: item.name,
+          meal: item.meal,
+          totalServings: 0
+        };
+      }
+      map[key].totalServings += item.portion;
+    });
+  });
+  
+  return Object.values(map).sort((a, b) => {
+    const mealOrder = { 'Breakfast': 1, 'Lunch': 2, 'Dinner': 3 };
+    if (mealOrder[a.meal] !== mealOrder[b.meal]) return mealOrder[a.meal] - mealOrder[b.meal];
+    return b.totalServings - a.totalServings;
+  });
+});
+
 const aggregatedIngredients = computed(() => {
   const map = {};
   
   todaysAssignments.value.forEach(assignment => {
     // Collect dish names assigned to this patient along with their portion multipliers
-    const dishes = [
-      { name: assignment.breakfastCarb, portion: assignment.breakfastPortion || 1.0 },
-      { name: assignment.breakfastProtein, portion: assignment.breakfastPortion || 1.0 },
-      { name: assignment.breakfastSide, portion: assignment.breakfastPortion || 1.0 },
-      { name: assignment.lunchCarb, portion: assignment.lunchPortion || 1.0 },
-      { name: assignment.lunchProtein, portion: assignment.lunchPortion || 1.0 },
-      { name: assignment.lunchSide, portion: assignment.lunchPortion || 1.0 },
-      { name: assignment.dinnerCarb, portion: assignment.dinnerPortion || 1.0 },
-      { name: assignment.dinnerProtein, portion: assignment.dinnerPortion || 1.0 },
-      { name: assignment.dinnerSide, portion: assignment.dinnerPortion || 1.0 }
-    ].filter(d => d.name);
+    const dishes = [];
+    if (!breakfastCompleted.value) {
+      dishes.push({ name: assignment.breakfastCarb, portion: assignment.breakfastPortion || 1.0 });
+      dishes.push({ name: assignment.breakfastProtein, portion: assignment.breakfastPortion || 1.0 });
+      dishes.push({ name: assignment.breakfastSide, portion: assignment.breakfastPortion || 1.0 });
+    }
+    if (!lunchCompleted.value) {
+      dishes.push({ name: assignment.lunchCarb, portion: assignment.lunchPortion || 1.0 });
+      dishes.push({ name: assignment.lunchProtein, portion: assignment.lunchPortion || 1.0 });
+      dishes.push({ name: assignment.lunchSide, portion: assignment.lunchPortion || 1.0 });
+    }
+    if (!dinnerCompleted.value) {
+      dishes.push({ name: assignment.dinnerCarb, portion: assignment.dinnerPortion || 1.0 });
+      dishes.push({ name: assignment.dinnerProtein, portion: assignment.dinnerPortion || 1.0 });
+      dishes.push({ name: assignment.dinnerSide, portion: assignment.dinnerPortion || 1.0 });
+    }
+    const validDishes = dishes.filter(d => d.name);
     
-    dishes.forEach(item => {
+    validDishes.forEach(item => {
       // Find the dish in dataStore
       const dish = dataStore.dishes.find(d => d.name === item.name);
       if (dish && dish.ingredients) {

@@ -254,6 +254,7 @@
                   <option>Breakfast</option>
                   <option>Lunch</option>
                   <option>Dinner</option>
+                  <option>All Meals</option>
                 </select>
               </div>
 

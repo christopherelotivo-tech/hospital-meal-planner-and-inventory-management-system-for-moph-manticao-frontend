@@ -32,17 +32,17 @@
           />
         </div>
       </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="border-b border-gray-100 text-xs font-bold text-gray-700 bg-gray-50/50">
-              <th class="px-6 py-3">Patient Name</th>
-              <th class="px-6 py-3">Room</th>
-              <th class="px-6 py-3">Diagnosis</th>
-              <th class="px-6 py-3">Diet Prescription</th>
-              <th class="px-6 py-3">Allergies</th>
-              <th class="px-6 py-3">Current Assignment</th>
-              <th class="px-6 py-3 text-right">Action</th>
+      <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+        <table class="w-full text-left border-collapse relative">
+          <thead class="sticky top-0 z-10 bg-white">
+            <tr class="border-b border-gray-200 text-xs font-bold text-gray-700 bg-gray-50">
+              <th class="px-6 py-3 shadow-[0_1px_0_#e5e7eb]">Patient Name</th>
+              <th class="px-6 py-3 shadow-[0_1px_0_#e5e7eb]">Room</th>
+              <th class="px-6 py-3 shadow-[0_1px_0_#e5e7eb]">Diagnosis</th>
+              <th class="px-6 py-3 shadow-[0_1px_0_#e5e7eb]">Diet Prescription</th>
+              <th class="px-6 py-3 shadow-[0_1px_0_#e5e7eb]">Allergies</th>
+              <th class="px-6 py-3 shadow-[0_1px_0_#e5e7eb]">Current Assignment</th>
+              <th class="px-6 py-3 text-right shadow-[0_1px_0_#e5e7eb]">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">

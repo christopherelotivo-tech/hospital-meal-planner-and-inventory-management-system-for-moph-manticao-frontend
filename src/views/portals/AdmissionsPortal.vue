@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <BasePortalLayout ref="layoutRef">
     <!-- Sidebar Header (Gradient Box) -->
     <template #sidebar-header="{ desktopSidebarOpen }">
@@ -113,13 +113,14 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
-import { LayoutDashboard, Users, FileText, UserCog, LogOut, ChevronDown } from 'lucide-vue-next';
+import { LayoutDashboard, Users, FileText, UserCog, BarChart2, LogOut, ChevronDown } from 'lucide-vue-next';
 import BasePortalLayout from '@/components/layout/BasePortalLayout.vue';
 import NotificationBell from '@/components/NotificationBell.vue';
 import AdmissionsDashboard from '@/components/admissions/AdmissionsDashboard.vue';
 import PatientList from '@/components/admissions/PatientList.vue';
 import PatientRecords from '@/components/admissions/PatientRecords.vue';
 import UserManagement from '@/components/admissions/UserManagement.vue';
+import ReportsScreen from '@/components/admissions/ReportsScreen.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -142,7 +143,8 @@ const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'patients', label: 'Patients', icon: Users },
   { id: 'records', label: 'Records', icon: FileText },
-  { id: 'user-management', label: 'User Management', icon: UserCog }
+  { id: 'user-management', label: 'User Management', icon: UserCog },
+  { id: 'reports', label: 'Reports', icon: BarChart2 }
 ];
 
 function selectModule(moduleId) {
@@ -163,7 +165,8 @@ function getCurrentModuleComponent() {
     dashboard: AdmissionsDashboard,
     patients: PatientList,
     records: PatientRecords,
-    'user-management': UserManagement
+    'user-management': UserManagement,
+    reports: ReportsScreen
   };
   return components[currentModule.value] || AdmissionsDashboard;
 }

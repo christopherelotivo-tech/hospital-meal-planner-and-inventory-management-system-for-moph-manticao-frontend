@@ -1,13 +1,13 @@
-<template>
+﻿<template>
   <div class="space-y-6">
     <!-- Backflush History Section -->
-    <div v-if="dataStore.backflushHistory.length > 0" class="space-y-4">
+    <div v-if="backflushHistory.length > 0" class="space-y-4">
       <div class="mb-6">
         <h2 class="text-2xl font-bold text-gray-900">Backflush History</h2>
         <p class="text-sm text-gray-600 mt-1">View all completed production items and their backflushed ingredients</p>
       </div>
 
-      <div v-for="history in dataStore.backflushHistory" :key="history.id" class="bg-white rounded-lg shadow overflow-hidden border border-green-200">
+      <div v-for="history in backflushHistory" :key="history.id" class="bg-white rounded-lg shadow overflow-hidden border border-green-200">
         <!-- Header with meal name and completion time -->
         <div class="bg-green-600 text-white p-6 flex items-center justify-between">
           <div class="flex items-center space-x-3">
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Divider if backflush history exists -->
-    <div v-if="dataStore.backflushHistory.length > 0" class="border-t border-gray-200"></div>
+    <div v-if="backflushHistory.length > 0" class="border-t border-gray-200"></div>
 
     <!-- Filters -->
     <div class="bg-white rounded-lg shadow p-6">
@@ -104,77 +104,17 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 text-sm text-gray-600">Mar 3, 2026 07:30 AM</td>
-              <td class="px-6 py-4 text-sm text-gray-900 font-medium">Breakfast</td>
-              <td class="px-6 py-4 text-sm text-gray-600">Ward A - General</td>
-              <td class="px-6 py-4 text-sm text-gray-900">45 portions</td>
-              <td class="px-6 py-4 text-sm"><span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Completed</span></td>
-              <td class="px-6 py-4 text-sm text-gray-600">Rosa Lopez</td>
-              <td class="px-6 py-4 text-sm text-gray-600">On time</td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 text-sm text-gray-600">Mar 3, 2026 10:15 AM</td>
-              <td class="px-6 py-4 text-sm text-gray-900 font-medium">Mid-Morning Snack</td>
+            <tr v-for="history in backflushHistory" :key="'table-' + history.id" class="hover:bg-gray-50">
+              <td class="px-6 py-4 text-sm text-gray-600">{{ new Date(history.completedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ history.mealName }}</td>
               <td class="px-6 py-4 text-sm text-gray-600">All Wards</td>
-              <td class="px-6 py-4 text-sm text-gray-900">85 portions</td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ history.ingredients.length }} ingredients</td>
               <td class="px-6 py-4 text-sm"><span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Completed</span></td>
-              <td class="px-6 py-4 text-sm text-gray-600">Maria Santos</td>
-              <td class="px-6 py-4 text-sm text-gray-600">On time</td>
+              <td class="px-6 py-4 text-sm text-gray-600">System (Auto)</td>
+              <td class="px-6 py-4 text-sm text-gray-600">Stock Deducted</td>
             </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 text-sm text-gray-600">Mar 2, 2026 12:45 PM</td>
-              <td class="px-6 py-4 text-sm text-gray-900 font-medium">Lunch (Regular Diet)</td>
-              <td class="px-6 py-4 text-sm text-gray-600">Ward A - General</td>
-              <td class="px-6 py-4 text-sm text-gray-900">40 portions</td>
-              <td class="px-6 py-4 text-sm"><span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Completed</span></td>
-              <td class="px-6 py-4 text-sm text-gray-600">Carlos Diaz</td>
-              <td class="px-6 py-4 text-sm text-gray-600">10 min delay</td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 text-sm text-gray-600">Mar 2, 2026 12:50 PM</td>
-              <td class="px-6 py-4 text-sm text-gray-900 font-medium">Lunch (Soft Diet)</td>
-              <td class="px-6 py-4 text-sm text-gray-600">Ward B - Post-Op</td>
-              <td class="px-6 py-4 text-sm text-gray-900">15 portions</td>
-              <td class="px-6 py-4 text-sm"><span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Completed</span></td>
-              <td class="px-6 py-4 text-sm text-gray-600">Rosa Lopez</td>
-              <td class="px-6 py-4 text-sm text-gray-600">On time</td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 text-sm text-gray-600">Mar 2, 2026 03:20 PM</td>
-              <td class="px-6 py-4 text-sm text-gray-900 font-medium">Afternoon Snack</td>
-              <td class="px-6 py-4 text-sm text-gray-600">All Wards</td>
-              <td class="px-6 py-4 text-sm text-gray-900">80 portions</td>
-              <td class="px-6 py-4 text-sm"><span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Completed</span></td>
-              <td class="px-6 py-4 text-sm text-gray-600">Maria Santos</td>
-              <td class="px-6 py-4 text-sm text-gray-600">On time</td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 text-sm text-gray-600">Mar 2, 2026 06:15 PM</td>
-              <td class="px-6 py-4 text-sm text-gray-900 font-medium">Dinner (Regular Diet)</td>
-              <td class="px-6 py-4 text-sm text-gray-600">Ward A - General</td>
-              <td class="px-6 py-4 text-sm text-gray-900">42 portions</td>
-              <td class="px-6 py-4 text-sm"><span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Completed</span></td>
-              <td class="px-6 py-4 text-sm text-gray-600">Carlos Diaz</td>
-              <td class="px-6 py-4 text-sm text-gray-600">On time</td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 text-sm text-gray-600">Mar 2, 2026 06:25 PM</td>
-              <td class="px-6 py-4 text-sm text-gray-900 font-medium">Dinner (Liquid Diet)</td>
-              <td class="px-6 py-4 text-sm text-gray-600">Ward C - ICU</td>
-              <td class="px-6 py-4 text-sm text-gray-900">8 portions</td>
-              <td class="px-6 py-4 text-sm"><span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Completed</span></td>
-              <td class="px-6 py-4 text-sm text-gray-600">Rosa Lopez</td>
-              <td class="px-6 py-4 text-sm text-gray-600">On time</td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 text-sm text-gray-600">Mar 1, 2026 08:00 AM</td>
-              <td class="px-6 py-4 text-sm text-gray-900 font-medium">Breakfast</td>
-              <td class="px-6 py-4 text-sm text-gray-600">Ward A - General</td>
-              <td class="px-6 py-4 text-sm text-gray-900">44 portions</td>
-              <td class="px-6 py-4 text-sm"><span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Completed</span></td>
-              <td class="px-6 py-4 text-sm text-gray-600">Rosa Lopez</td>
-              <td class="px-6 py-4 text-sm text-gray-600">On time</td>
+            <tr v-if="backflushHistory.length === 0">
+              <td colspan="7" class="px-6 py-8 text-center text-sm text-gray-500">No production history found yet. Complete a meal in the Production Schedule to see it here.</td>
             </tr>
           </tbody>
         </table>
@@ -184,11 +124,12 @@
 </template>
 
 <script setup>
-
+import { computed } from 'vue';
 import { CheckCircle, Clock, Zap } from 'lucide-vue-next';
 import { useDataStore } from '../../stores/dataStore';
 
 const dataStore = useDataStore();
+const backflushHistory = computed(() => dataStore.backflushHistory.value || []);
 </script>
 
 <style scoped>

@@ -433,7 +433,7 @@ export const useDataStore = defineStore('data', () => {
     ingredients: [{ name: 'Chicken', qty: 0.05, unit: 'kg' }] 
   },
   { 
-    id: 'D012', name: 'White Rice (1 Cup)', mealType: 'Lunch', componentType: 'Carbohydrate-Controlled Diet', dietCategories: ['Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'Low Salt/Low Fat', 'Low Purine'], 
+    id: 'D012', name: 'White Rice (1 Cup)', mealType: 'All Meals', componentType: 'Carbohydrate-Controlled Diet', dietCategories: ['Normal Diet (Regular Diet)', 'Soft Diet (Mechanical Soft Diet)', 'Low Salt/Low Fat', 'Low Purine'], 
     cost: 15, calories: 200, protein: 4, carbs: 45, fat: 0, sodium: 0, description: 'Steamed white rice', allergens: [],
     ingredients: [{ name: 'Rice', qty: 0.1, unit: 'kg' }] 
   },
@@ -550,6 +550,11 @@ export const useDataStore = defineStore('data', () => {
             type: 'discharge',
             time: new Date().toISOString()
           });
+
+          // Automatically cancel/remove active meal assignments so the Kitchen stops cooking for them!
+          mealAssignments.value = mealAssignments.value.filter(m => m.patientId !== oldPatient.id);
+          saveToStorage('mealAssignments', mealAssignments.value);
+          
         } else if (updates.status === 'Pending') {
           addActivityLog({
             name: oldPatient.name,
@@ -666,6 +671,7 @@ export const useDataStore = defineStore('data', () => {
 
   const inventory = ref(loadFromStorage('inventory', defaultInventory));
   const stockMovementLogs = ref(loadFromStorage('stockMovementLogs', defaultStockMovementLogs));
+  const purchaseOrders = ref(loadFromStorage('purchaseOrders', []));
 
   function addStockIn(item) {
     const qty = parseFloat(item.quantity);
@@ -725,6 +731,16 @@ export const useDataStore = defineStore('data', () => {
     saveToStorage('stockMovementLogs', stockMovementLogs.value);
   }
 
+  function addPurchaseOrder(po) {
+    purchaseOrders.value.unshift(po);
+    saveToStorage('purchaseOrders', purchaseOrders.value);
+    po.items.forEach(item => {
+      if (item.name && item.qty > 0) {
+        addStockIn({ name: item.name, quantity: item.qty, unit: item.unit || 'kg', cost: item.cost || 0, type: 'Perishable', location: 'Pantry' });
+      }
+    });
+  }
+
   function deductStock(itemName, quantity) {
     const existing = inventory.value.find(
       (i) => i.name.toLowerCase() === itemName.toLowerCase()
@@ -774,6 +790,7 @@ export const useDataStore = defineStore('data', () => {
     activityLogs,
     inventory,
     stockMovementLogs,
+    purchaseOrders,
     addPatient,
     updatePatient,
     addDish,
@@ -790,6 +807,7 @@ export const useDataStore = defineStore('data', () => {
     updateUser,
     addActivityLog,
     addStockIn,
-    deductStock
+    deductStock,
+    addPurchaseOrder
   };
 });

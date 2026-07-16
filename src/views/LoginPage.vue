@@ -106,6 +106,13 @@
           <span>{{ loading ? 'Signing In...' : 'Login' }}</span>
         </button>
       </form>
+      
+      <!-- Forgot Password Link -->
+      <div class="mt-4 text-center">
+        <router-link to="/forgot-password" class="text-xs font-semibold text-[#2D5F3F] hover:text-[#1b4332] hover:underline">
+          Forgot your password?
+        </router-link>
+      </div>
 
       <!-- Demo Account Hint -->
       <p class="text-[10px] text-gray-400 text-center mt-5 font-dm-mono">

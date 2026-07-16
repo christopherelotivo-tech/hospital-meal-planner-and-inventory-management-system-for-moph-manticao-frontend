@@ -49,110 +49,133 @@
     </div>
 
     <!-- Room Detail View (After Scanning) -->
-    <div v-if="scannedRoom" class="min-h-screen bg-gray-50">
+    <div v-if="scannedRoom" class="min-h-screen bg-gray-50 flex flex-col">
       <!-- Header -->
-      <div class="bg-teal-600 text-white p-6 text-center sticky top-0 z-40">
-        <button @click="backToScanner" class="flex items-center gap-2 text-white hover:text-teal-100 mb-4">
+      <div class="bg-teal-600 text-white p-4 text-center shrink-0">
+        <button @click="backToScanner" class="flex items-center gap-2 text-white hover:text-teal-100 mb-2">
           <span>←</span>
-          <span>Back to Scanner</span>
+          <span class="text-sm font-semibold">Back to Scanner</span>
         </button>
-        <h2 class="text-4xl font-bold">Room {{ scannedRoom.room }}</h2>
-        <p class="text-teal-100 mt-2">{{ scannedRoom.patientCount }} Patient</p>
+        <h2 class="text-3xl font-bold">Room {{ scannedRoom.room }}</h2>
+        <div class="mt-2 text-teal-100 font-medium text-sm flex items-center justify-center gap-2">
+          <span>Patient {{ currentPatientIndex + 1 }} of {{ scannedRoom.patients.length }}</span>
+          <div class="flex gap-1">
+            <div v-for="(_, i) in scannedRoom.patients" :key="i" class="w-2 h-2 rounded-full" :class="i === currentPatientIndex ? 'bg-white' : 'bg-teal-800'"></div>
+          </div>
+        </div>
       </div>
 
-      <!-- Content -->
-      <div class="p-6 max-w-2xl mx-auto space-y-6">
+      <!-- Content Carousel -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-4">
         <!-- Info Box -->
-        <div class="bg-cyan-50 border-2 border-cyan-400 rounded-lg p-4 flex gap-3">
-          <Info class="text-cyan-600 flex-shrink-0 mt-1" :size="24" />
-          <div class="text-cyan-700">
-            <div class="font-semibold">Review this list before serving</div>
-            <p class="text-sm mt-1">Verify each patient's diet type and check for allergies. After you've distributed meals to all patients, click the button below.</p>
-          </div>
+        <div class="bg-cyan-50 border-2 border-cyan-400 rounded-lg p-3 flex gap-3 text-cyan-800">
+          <Info class="flex-shrink-0 mt-0.5" :size="20" />
+          <p class="text-xs font-medium leading-relaxed">Verify diet type and allergies before handing over the tray. Use the Next button to view the next patient.</p>
         </div>
 
         <!-- Patient Card -->
-        <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div v-if="currentPatient" class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden relative">
           <!-- Patient Header -->
           <div class="bg-teal-600 text-white p-4">
-            <h3 class="text-2xl font-bold">{{ scannedRoom.patientName }}</h3>
-            <p class="text-teal-100 text-sm mt-1">🛏️ {{ scannedRoom.bed }} • Room {{ scannedRoom.room }}</p>
+            <h3 class="text-xl font-bold">{{ currentPatient.patientName }}</h3>
+            <p class="text-teal-100 text-sm mt-1 font-semibold">🛏️ {{ currentPatient.bed }} • {{ currentPatient.diagnosis }}</p>
           </div>
 
           <!-- Patient Details -->
-          <div class="p-6 space-y-4">
-            <div>
-              <label class="text-sm text-gray-500 font-semibold">Diagnosis</label>
-              <p class="text-gray-900 font-medium">{{ scannedRoom.diagnosis }}</p>
-            </div>
-
-            <div>
-              <label class="text-sm text-gray-500 font-semibold">Diet Prescription</label>
-              <br>
-              <span class="inline-block mt-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">{{ scannedRoom.diet }}</span>
-            </div>
-
-            <div>
-              <label class="text-sm text-gray-500 font-semibold">Allergies</label>
-              <div class="mt-2 flex items-center gap-2 text-gray-700">
-                <span class="text-gray-400">●</span>
-                <span>{{ scannedRoom.allergies }}</span>
+          <div class="p-5 space-y-5">
+            <div class="flex gap-4">
+              <div class="flex-1">
+                <label class="text-xs text-gray-500 font-bold uppercase tracking-wider block mb-1">Diet Prescription</label>
+                <span class="inline-block px-3 py-1.5 bg-green-100 text-green-800 rounded-lg text-sm font-bold border border-green-200 shadow-sm">{{ currentPatient.diet }}</span>
+              </div>
+              <div class="flex-1">
+                <label class="text-xs text-gray-500 font-bold uppercase tracking-wider block mb-1">Allergies</label>
+                <span class="inline-block px-3 py-1.5 bg-red-50 text-red-700 rounded-lg text-sm font-semibold border border-red-100">{{ currentPatient.allergies }}</span>
               </div>
             </div>
 
             <!-- Assigned Meal Components -->
-            <div v-if="scannedMeal" class="mt-4 pt-4 border-t border-gray-100">
-              <label class="text-sm text-teal-700 font-bold uppercase tracking-wider mb-2 block">Assigned Tray Components</label>
-              <div class="space-y-3">
-                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
-                  <span class="text-xs font-semibold text-gray-500 uppercase">🌾 Carb</span>
-                  <span class="font-bold text-gray-800">{{ scannedMeal.lunchCarb || scannedMeal.breakfastCarb || scannedMeal.dinnerCarb || 'None' }}</span>
+            <div v-if="scannedMeal" class="mt-2 pt-4 border-t border-gray-100">
+              <label class="text-xs text-teal-700 font-bold uppercase tracking-wider mb-3 block">Assigned Tray Components</label>
+              <div class="grid gap-2">
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center shadow-sm">
+                  <span class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">🌾 Carb</span>
+                  <span class="font-bold text-gray-800 text-sm">{{ scannedMeal.lunchCarb || scannedMeal.breakfastCarb || scannedMeal.dinnerCarb || 'None' }}</span>
                 </div>
-                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
-                  <span class="text-xs font-semibold text-gray-500 uppercase">🍗 Viand</span>
-                  <span class="font-bold text-gray-800">{{ scannedMeal.lunchProtein || scannedMeal.breakfastProtein || scannedMeal.dinnerProtein || 'None' }}</span>
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center shadow-sm">
+                  <span class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">🍗 Viand</span>
+                  <span class="font-bold text-gray-800 text-sm">{{ scannedMeal.lunchProtein || scannedMeal.breakfastProtein || scannedMeal.dinnerProtein || 'None' }}</span>
                 </div>
-                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
-                  <span class="text-xs font-semibold text-gray-500 uppercase">🍎 Side/Fruit</span>
-                  <span class="font-bold text-gray-800">{{ scannedMeal.lunchSide || scannedMeal.breakfastSide || scannedMeal.dinnerSide || 'None' }}</span>
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center shadow-sm">
+                  <span class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">🍎 Side/Fruit</span>
+                  <span class="font-bold text-gray-800 text-sm">{{ scannedMeal.lunchSide || scannedMeal.breakfastSide || scannedMeal.dinnerSide || 'None' }}</span>
                 </div>
               </div>
             </div>
-            <div v-else class="mt-4 pt-4 border-t border-gray-100 text-amber-600 font-semibold text-sm">
-              ⚠️ No meal assigned for this patient today.
+            <div v-else class="mt-4 p-4 border border-amber-200 bg-amber-50 rounded-lg text-amber-700 font-bold text-sm text-center">
+              ⚠️ No meal assigned for today.
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Action Button -->
-        <button @click="markAllServed" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition">
+      <!-- Fixed Bottom Action Bar -->
+      <div class="bg-white border-t border-gray-200 p-4 shrink-0 flex gap-3 pb-8">
+        <button 
+          @click="prevPatient" 
+          :disabled="currentPatientIndex === 0"
+          class="px-5 py-4 bg-gray-100 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed text-gray-700 font-bold rounded-xl transition flex-shrink-0"
+        >
+          Prev
+        </button>
+
+        <button 
+          v-if="currentPatientIndex < (scannedRoom.patients.length - 1)"
+          @click="nextPatient" 
+          class="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg transition active:scale-95"
+        >
+          Next Patient
+        </button>
+
+        <button 
+          v-else
+          @click="markAllServed" 
+          class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg transition active:scale-95"
+        >
           <CheckCircle2 :size="20" />
-          Mark All Served & Next Room
+          Complete Room
         </button>
       </div>
     </div>
 
     <!-- Initial View -->
-    <div v-if="!cameraOpen && !scannedRoom && !handheldMode" class="bg-white rounded-lg shadow p-6">
-      <h2 class="text-lg font-bold text-gray-900 mb-4">Mobile Distribution</h2>
-      <p class="text-sm text-gray-600 mb-6">QR Scanner &amp; Handheld mode for on-the-go meal deliveries.</p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div @click="openCamera" role="button" tabindex="0" class="bg-amber-50 hover:bg-amber-100 p-6 rounded-lg flex flex-col items-center justify-center cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-amber-500">
-          <QrCode :size="60" class="text-amber-600 mb-4" />
-          <h3 class="font-semibold text-gray-900">QR Scanner</h3>
-          <p class="text-sm text-gray-600 text-center">Scan ward QR codes to log distributions instantly.</p>
-          <span class="mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg font-semibold hover:bg-amber-600 inline-block">
-            Open Camera
-          </span>
-        </div>
-        <div @click="openHandheld" role="button" tabindex="0" class="bg-amber-50 hover:bg-amber-100 p-6 rounded-lg flex flex-col items-center justify-center cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-amber-500">
-          <Smartphone :size="60" class="text-amber-600 mb-4" />
-          <h3 class="font-semibold text-gray-900">Handheld Mode</h3>
-          <p class="text-sm text-gray-600 text-center">Manually record deliveries using the mobile interface.</p>
-          <span class="mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg font-semibold hover:bg-amber-600 inline-block">
-            Open Handheld
-          </span>
-        </div>
+    <div v-if="!cameraOpen && !scannedRoom && !handheldMode" class="bg-gray-50 flex flex-col h-[calc(100vh-100px)] min-h-[500px]">
+      <div class="p-6 pb-2 text-center">
+        <h2 class="text-2xl font-bold text-gray-900">Food Server App</h2>
+        <p class="text-sm text-gray-500 mt-1">Ready to deliver meals.</p>
+      </div>
+      
+      <div class="flex-1 flex flex-col items-center justify-center p-6 space-y-6">
+        <!-- Massive QR Scanner Button -->
+        <button 
+          @click="openCamera" 
+          class="w-full max-w-sm aspect-square bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl shadow-xl flex flex-col items-center justify-center text-white transition-transform active:scale-95 focus:outline-none focus:ring-4 focus:ring-amber-300"
+        >
+          <div class="bg-white/20 p-6 rounded-full mb-6">
+            <QrCode :size="80" stroke-width="1.5" />
+          </div>
+          <h3 class="font-caprasimo text-2xl tracking-wide mb-2">Scan QR Code</h3>
+          <p class="text-amber-100 text-sm opacity-90 px-8 text-center">Tap to open camera and scan patient wristband or room door.</p>
+        </button>
+
+        <!-- Secondary Handheld Button -->
+        <button 
+          @click="openHandheld" 
+          class="w-full max-w-sm bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center justify-center space-x-3 text-gray-700 hover:bg-gray-50 transition-colors active:scale-95"
+        >
+          <Smartphone :size="20" class="text-gray-400" />
+          <span class="font-semibold">Manual Distribution List</span>
+        </button>
       </div>
     </div>
   </div>
@@ -167,16 +190,22 @@ const dataStore = useDataStore();
 const cameraOpen = ref(false);
 const videoElement = ref(null);
 const scannedRoom = ref(null);
+const currentPatientIndex = ref(0);
 const lastScannedIndex = ref(-1);
 const handheldMode = ref(false);
 const handheldServed = ref(new Set());
 
 // We will dynamically pull from dataStore in simulateScan
 
+const currentPatient = computed(() => {
+  if (!scannedRoom.value || !scannedRoom.value.patients) return null;
+  return scannedRoom.value.patients[currentPatientIndex.value];
+});
+
 const scannedMeal = computed(() => {
-  if (!scannedRoom.value) return null;
+  if (!currentPatient.value) return null;
   const today = new Date().toISOString().split('T')[0];
-  return dataStore.mealAssignments.find(m => m.patientId === scannedRoom.value.id && m.date === today);
+  return dataStore.mealAssignments.find(m => m.patientId === currentPatient.value.id && m.date === today);
 });
 
 async function openCamera() {
@@ -204,9 +233,16 @@ async function openCamera() {
 function simulateScan() {
   const today = new Date().toISOString().split('T')[0];
   // Find patients that have meal assignments today
-  const patientsWithMeals = dataStore.patients.filter(p => 
+  let patientsWithMeals = dataStore.patients.filter(p => 
     dataStore.mealAssignments.some(m => m.patientId === p.id && m.date === today)
   );
+
+  // Fallback for prototype: if no meals today, just use any patient with a meal assignment
+  if (patientsWithMeals.length === 0) {
+    patientsWithMeals = dataStore.patients.filter(p => 
+      dataStore.mealAssignments.some(m => m.patientId === p.id)
+    );
+  }
   
   if (patientsWithMeals.length === 0) {
     alert("No patients have meal assignments for today. Please assign meals in the Dietitian portal first.");
@@ -214,26 +250,47 @@ function simulateScan() {
     return;
   }
 
-  // Cycle through the patients
-  lastScannedIndex.value = (lastScannedIndex.value + 1) % patientsWithMeals.length;
-  const patient = patientsWithMeals[lastScannedIndex.value];
-  
-  // Find their prescription to get diet and allergies
-  const rx = dataStore.prescriptions
-    .filter(p => p.patientId === patient.id)
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+  // Cycle through the rooms instead of individual patients
+  const rooms = Array.from(new Set(patientsWithMeals.map(p => p.room)));
+  lastScannedIndex.value = (lastScannedIndex.value + 1) % rooms.length;
+  const selectedRoom = rooms[lastScannedIndex.value];
+
+  // Get all patients in that room
+  const patientsInRoom = patientsWithMeals.filter(p => p.room === selectedRoom).map(patient => {
+    // Find their prescription to get diet and allergies
+    const rx = dataStore.prescriptions
+      .filter(p => p.patientId === patient.id)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+    return {
+      id: patient.id,
+      patientName: patient.name,
+      bed: patient.bed || 'Bed A',
+      diagnosis: patient.condition || 'Not specified',
+      diet: rx ? rx.dietType : 'Normal Diet (Regular Diet)',
+      allergies: patient.allergies ? patient.allergies : (rx && rx.allergies.length > 0 ? rx.allergies.join(', ') : 'No known allergies')
+    };
+  });
 
   scannedRoom.value = {
-    id: patient.id,
-    room: patient.room,
-    patientName: patient.name,
-    patientCount: 1,
-    diagnosis: patient.condition || 'Not specified',
-    diet: rx ? rx.dietType : 'Normal Diet (Regular Diet)',
-    allergies: patient.allergies ? patient.allergies : (rx && rx.allergies.length > 0 ? rx.allergies.join(', ') : 'No known allergies')
+    room: selectedRoom,
+    patients: patientsInRoom
   };
+  currentPatientIndex.value = 0;
   
   closeCamera();
+}
+
+function nextPatient() {
+  if (currentPatientIndex.value < scannedRoom.value.patients.length - 1) {
+    currentPatientIndex.value++;
+  }
+}
+
+function prevPatient() {
+  if (currentPatientIndex.value > 0) {
+    currentPatientIndex.value--;
+  }
 }
 
 function closeCamera() {

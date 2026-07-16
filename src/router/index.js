@@ -8,6 +8,8 @@ import DoctorPortal from '@/views/portals/DoctorPortal.vue';
 import DietitianPortal from '@/views/portals/DietitianPortal.vue';
 import PurchasingOfficerPortal from '@/views/portals/PurchasingOfficerPortal.vue';
 import KitchenStaffPortal from '@/views/portals/KitchenStaffPortal.vue';
+import ForgotPassword from '@/views/ForgotPassword.vue';
+import ResetPassword from '@/views/ResetPassword.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -26,6 +28,16 @@ const router = createRouter({
     path: '/login',
     name: 'Login',
     component: LoginPage
+  },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: ForgotPassword
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword
   },
   {
     path: '/admissions',
