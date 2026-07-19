@@ -18,57 +18,54 @@ Manticao Public Hospital (MOPH) uses a **Just-In-Time (JIT) procurement model**.
 
 ---
 
-## 2. Module & Screen Blueprint (Frontend Functionality)
+## 2. Module & Screen Blueprint (Exact Frontend `.vue` Files)
 
-We have completely revamped the frontend Vue 3 application to support this JIT workflow. Here is the exact breakdown of every portal, screen, and functionality that the backend needs to support:
+We have built specific Vue components for every role. The backend MUST support the data structures required by these exact files.
 
-### 🏥 Admin / Admissions Portal
+### 🏥 Admin / Admissions Portal (`src/components/admissions/`)
 Responsible for patient registration, discharge, and system user management.
-* **1. Admissions Dashboard:** Displays KPIs like Total Admitted Patients, Pending Discharges, and Recent Admissions.
-* **2. Patient Registration:** A form to admit new patients after doctor's consultation. Admitted patients instantly reflect on the Doctor portal.
-* **3. Patient Records:** Patient history and record editing.
-* **4. User Management:** Allows the Admin to create and manage accounts/passwords for all roles (Doctor, Dietitian, Purchasing Officer, Kitchen Staff, Food Server).
+* `AdmissionsDashboard.vue`: Displays KPIs (Total Admitted Patients, Pending Discharges, Recent Admissions).
+* `PatientRegistration.vue`: Form to admit new patients (reflects on Doctor portal).
+* `PatientList.vue` & `PatientRecords.vue`: Displays list and historical records of patients.
+* `PatientDetailsModal.vue`: Modal for viewing/editing specific patient details.
+* `UserManagement.vue` & `UserModal.vue`: Admin creates and manages accounts/passwords for all roles.
+* `ReportsScreen.vue`: Generates administrative reports for the hospital.
 
-### 🩺 Doctor Portal
+### 🩺 Doctor Portal (`src/components/doctor/`)
 Responsible for medical assessments and prescribing diets.
-* **1. Doctor Dashboard:** Displays KPIs like Active Patients and Total Diets Prescribed.
-* **2. Patient Profiles:** Shows the list of patients added by Admissions.
-* **3. Diet Prescriptions:** The doctor writes the diet prescription (e.g., "Low-Sodium", "Soft Diet"), adds allergen restrictions, and provides medical orders. This immediately pushes to the Dietitian's portal.
-* **4. Diet History:** Tracks the historical prescribed diets and whether the meal has been served or is pending.
+* `DoctorDashboard.vue`: Displays KPIs (Active Patients, Total Diets Prescribed).
+* `PatientPrescriptionsScreen.vue`: Main screen where the doctor views patients, writes diet prescriptions ("Low-Sodium"), adds allergen restrictions, and provides medical orders. Pushes to Dietitian portal.
+* `PatientDietaryHistory.vue`: Tracks historical prescribed diets and meal service status.
 
-### 🥗 Dietitian Portal
+### 🥗 Dietitian Portal (`src/components/dietitian/`)
 Responsible for assigning daily meals within budget, planning, and reporting.
-* **1. Dietitian Dashboard:** High-level KPIs (Meals planned today, Total budget used, Pending prescriptions).
-* **2. Patient Profiles:** View patients and edit nutritional profiles.
-* **3. Diet Prescriptions:** A detailed view of the doctor's prescriptions to guide meal planning.
-* **4. Meal Assignment:** The core screen. The dietitian assigns Breakfast, Lunch, and Dinner based on the doctor's prescription. 
-  * *UI Note:* Active Diet Groups are collapsible on the sidebar, Meal Assignment takes up the main view, and a Financial Summary tracks the ₱150 daily budget per patient.
-  * Allows single patient (special orders) and batch assignments for multiple patients with the same diagnosis.
-* **5. Meal Calendar:** Long-term meal planning view.
-* **6. Dish Menu:** Where the dietitian creates and manages the hospital's recipes/dishes and maps their required ingredients.
-* **7. Food Exchange AI:** An integrated AI chatbot that allows the dietitian to ask for Philippine Food Exchange list substitutes (e.g., "What can I substitute for 100g of pork?").
-* **8. Service History:** Tracks assigned meals and their service status.
-* **9. DOH Audit Report:** Generates downloadable Excel reports for the Department of Health (patients served, total ingredient costs, budget compliance).
+* `DietitianDashboard.vue`: High-level KPIs (Meals planned today, Total budget used).
+* `PatientProfiles.vue`: View patients and edit nutritional profiles.
+* `PrescriptionsView.vue`: Detailed view of the doctor's prescriptions to guide meal planning.
+* `MealAssignmentScreen.vue`: Core screen to assign Breakfast, Lunch, and Dinner. Includes a Financial Summary tracking the ₱150 daily budget limit per patient.
+* `MealCalendar.vue`: Long-term meal planning view.
+* `DailyProduction.vue`: Dietitian's view of what needs to be produced by the kitchen today.
+* `DishMenu.vue`: Where the dietitian creates/manages hospital recipes/dishes and maps required ingredients.
+* `FoodExchangeHub.vue`: An integrated AI chatbot for Philippine Food Exchange list substitutes.
+* `MealServiceHistory.vue`: Tracks assigned meals and their service status.
+* `DohReport.vue`: Generates downloadable Excel reports for the Department of Health (patients served, total ingredient costs).
 
-### 🛒 Purchasing Officer Portal (JIT Workflow)
-Responsible for daily market runs and logging receipts. *(Massively overhauled from the old design)*
-* **1. Purchasing Dashboard (Daily Market List):** Instead of a traditional low-stock warehouse view, this screen aggregates all ingredients needed for tomorrow's assigned meals. 
-  * The officer goes to the market, buys the items, and clicks **"Log Purchase"** to input the exact price paid.
-  * Includes a **"Log Unplanned Purchase"** modal for budget adjustments or substitute ingredients bought at the market that weren't on the list.
-  * Logging a purchase automatically adds the item to the hospital's inventory stock.
-* **2. Purchase History & Receipts:** Tracks all incoming purchases and manual market receipts. (Replaced the old "Purchase Orders" and "Stock Movement" screens for simplicity).
-* **3. Inventory Dashboard:** Shows current stock levels (which generally drop to zero daily after production).
+### 🛒 Purchasing Officer Portal (`src/components/purchasingOfficer/`)
+Responsible for daily market runs and logging receipts.
+* `PurchasingOfficerDashboard.vue`: The "Daily Market List". Aggregates all ingredients needed for tomorrow's assigned meals. The officer clicks **"Log Purchase"** to input the exact price paid at the market, or **"Log Unplanned Purchase"** for substitutes.
+* `PurchaseHistory.vue`: Tracks all incoming purchases and manual market receipts.
+* `StockMovementLog.vue`: Tracks all incoming and outgoing stock movements (additions from purchases, deductions from kitchen backflushing).
 
-### 🍳 Kitchen Staff Portal
+### 🍳 Kitchen Staff Portal (`src/components/kitchenStaff/`)
 Responsible for food production and inventory backflushing.
-* **1. Production Schedule:** Displays the exact dishes and quantities to cook today based on Dietitian assignments. The staff clicks "Mark as Cooked" when food is ready.
-  * *Crucial Backend Trigger:* Clicking "Mark as Cooked" triggers the **Inventory Backflush**, automatically deducting the exact ingredients used from the system's inventory.
-* **2. Production History (Backflush History):** View all completed production items and the ingredients that were automatically deducted.
+* `ProductionSchedule.vue`: Displays exact dishes and quantities to cook today based on Dietitian assignments. Staff clicks "Mark as Cooked".
+  * *Crucial Backend Trigger:* Clicking "Mark as Cooked" triggers the **Inventory Backflush**, automatically deducting exact ingredients used from inventory.
+* `ProductionHistory.vue`: View all completed production items and the ingredients that were automatically deducted (Backflush History).
 
-### 🍽️ Food Server Portal
+### 🍽️ Food Server Portal (`src/components/foodServer/`)
 Responsible for delivering meals to patient rooms.
-* **1. Distribution List:** Displays the food assigned to each patient, their dietary prescriptions, and their room number.
-* **2. QR Code Scanner:** The server scans a QR code on a ward/room door. The system instantly filters the list to show only the patients in that room, allowing the server to quickly "Mark All as Served".
+* `DistributionList.vue`: Displays food assigned to each patient, dietary prescriptions, and room number.
+* `MobileDistribution.vue`: Mobile-optimized view (usually with QR scanning functionality) to quickly mark meals as served by room/ward.
 
 ---
 
