@@ -18,58 +18,7 @@ Manticao Public Hospital (MOPH) uses a **Just-In-Time (JIT) procurement model**.
 
 ---
 
-## 2. Module & Screen Blueprint (Exact Frontend `.vue` Files)
-
-We have built specific Vue components for every role. The backend MUST support the data structures required by these exact files.
-
-### 🏥 Admin / Admissions Portal (`src/components/admissions/`)
-Responsible for patient registration, discharge, and system user management.
-* `AdmissionsDashboard.vue`: Displays KPIs (Total Admitted Patients, Pending Discharges, Recent Admissions).
-* `PatientRegistration.vue`: Form to admit new patients (reflects on Doctor portal).
-* `PatientList.vue` & `PatientRecords.vue`: Displays list and historical records of patients.
-* `PatientDetailsModal.vue`: Modal for viewing/editing specific patient details.
-* `UserManagement.vue` & `UserModal.vue`: Admin creates and manages accounts/passwords for all roles.
-* `ReportsScreen.vue`: Generates administrative reports for the hospital.
-
-### 🩺 Doctor Portal (`src/components/doctor/`)
-Responsible for medical assessments and prescribing diets.
-* `DoctorDashboard.vue`: Displays KPIs (Active Patients, Total Diets Prescribed).
-* `PatientPrescriptionsScreen.vue`: Main screen where the doctor views patients, writes diet prescriptions ("Low-Sodium"), adds allergen restrictions, and provides medical orders. Pushes to Dietitian portal.
-* `PatientDietaryHistory.vue`: Tracks historical prescribed diets and meal service status.
-
-### 🥗 Dietitian Portal (`src/components/dietitian/`)
-Responsible for assigning daily meals within budget, planning, and reporting.
-* `DietitianDashboard.vue`: High-level KPIs (Meals planned today, Total budget used).
-* `PatientProfiles.vue`: View patients and edit nutritional profiles.
-* `PrescriptionsView.vue`: Detailed view of the doctor's prescriptions to guide meal planning.
-* `MealAssignmentScreen.vue`: Core screen to assign Breakfast, Lunch, and Dinner. Includes a Financial Summary tracking the ₱150 daily budget limit per patient.
-* `MealCalendar.vue`: Long-term meal planning view.
-* `DailyProduction.vue`: Dietitian's view of what needs to be produced by the kitchen today.
-* `DishMenu.vue`: Where the dietitian creates/manages hospital recipes/dishes and maps required ingredients.
-* `FoodExchangeHub.vue`: An integrated AI chatbot for Philippine Food Exchange list substitutes.
-* `MealServiceHistory.vue`: Tracks assigned meals and their service status.
-* `DohReport.vue`: Generates downloadable Excel reports for the Department of Health (patients served, total ingredient costs).
-
-### 🛒 Purchasing Officer Portal (`src/components/purchasingOfficer/`)
-Responsible for daily market runs and logging receipts.
-* `PurchasingOfficerDashboard.vue`: The "Daily Market List". Aggregates all ingredients needed for tomorrow's assigned meals. The officer clicks **"Log Purchase"** to input the exact price paid at the market, or **"Log Unplanned Purchase"** for substitutes.
-* `PurchaseHistory.vue`: Tracks all incoming purchases and manual market receipts.
-* `StockMovementLog.vue`: Tracks all incoming and outgoing stock movements (additions from purchases, deductions from kitchen backflushing).
-
-### 🍳 Kitchen Staff Portal (`src/components/kitchenStaff/`)
-Responsible for food production and inventory backflushing.
-* `ProductionSchedule.vue`: Displays exact dishes and quantities to cook today based on Dietitian assignments. Staff clicks "Mark as Cooked".
-  * *Crucial Backend Trigger:* Clicking "Mark as Cooked" triggers the **Inventory Backflush**, automatically deducting exact ingredients used from inventory.
-* `ProductionHistory.vue`: View all completed production items and the ingredients that were automatically deducted (Backflush History).
-
-### 🍽️ Food Server Portal (`src/components/foodServer/`)
-Responsible for delivering meals to patient rooms.
-* `DistributionList.vue`: Displays food assigned to each patient, dietary prescriptions, and room number.
-* `MobileDistribution.vue`: Mobile-optimized view (usually with QR scanning functionality) to quickly mark meals as served by room/ward.
-
----
-
-## 3. Database Schema (MySQL)
+## 2. Database Schema (MySQL)
 
 We have created the migration files in the Laravel backend (`hospital-backend`). Here is the core structure of the tables:
 
@@ -119,6 +68,15 @@ erDiagram
 
 ---
 
+## 3. Frontend Architecture
+
+* **Framework:** Vue 3 (Vite) + TailwindCSS.
+* **State Management:** Pinia (`src/stores/dataStore.js`).
+* **Routing:** Vue Router (`src/router/index.js`).
+* **API Integration Point:** Currently, `dataStore.js` uses `localStorage` for data persistence. This store must be updated to make HTTP requests (using Axios) to the Laravel backend.
+
+---
+
 ## 4. Current Work: Backend To-Do List
 
 For the developer continuing backend development:
@@ -148,11 +106,11 @@ Build the following API endpoints in Laravel:
 
 ### Step 4: DOH Audit Reporting
 * Create an endpoint to generate comprehensive reports for DOH (Department of Health) audits.
-* **Logic:** The backend should compile data from `purchase_history` (expenses) and `meal_assignments` (budget adherence) and return a structured report.
+* **Logic:** The backend should compile data from `purchase_history` (expenses) and `meal_assignments` (budget adherence) and return a structured report matching the `DohReport.vue` requirements.
 
 ### Step 5: AI Food Exchange Chatbot Integration
 * The Dietitian portal includes a "Food Exchange AI" tool.
-* **Logic:** Create a Laravel service that connects to an LLM API (like OpenAI or Gemini). Expose an endpoint (`POST /api/chat/food-exchange`) that takes a dietitian's query.
+* **Logic:** Create a Laravel service that connects to an LLM API (like OpenAI or Gemini). Expose an endpoint (`POST /api/chat/food-exchange`) that takes a dietitian's query (e.g., "What can I substitute for 100g of pork?") and returns nutritional equivalents based on Philippine Food Exchange lists.
 
 ### Step 6: Database Triggers & Observers (Automation)
 * Use Laravel Observers (or MySQL triggers) to automate background tasks.
