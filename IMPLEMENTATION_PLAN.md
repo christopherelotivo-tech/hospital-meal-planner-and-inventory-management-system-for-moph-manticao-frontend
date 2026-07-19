@@ -18,7 +18,61 @@ Manticao Public Hospital (MOPH) uses a **Just-In-Time (JIT) procurement model**.
 
 ---
 
-## 2. Database Schema (MySQL)
+## 2. Module & Screen Blueprint (Frontend Functionality)
+
+We have completely revamped the frontend Vue 3 application to support this JIT workflow. Here is the exact breakdown of every portal, screen, and functionality that the backend needs to support:
+
+### 🏥 Admin / Admissions Portal
+Responsible for patient registration, discharge, and system user management.
+* **1. Admissions Dashboard:** Displays KPIs like Total Admitted Patients, Pending Discharges, and Recent Admissions.
+* **2. Patient Registration:** A form to admit new patients after doctor's consultation. Admitted patients instantly reflect on the Doctor portal.
+* **3. Patient Records:** Patient history and record editing.
+* **4. User Management:** Allows the Admin to create and manage accounts/passwords for all roles (Doctor, Dietitian, Purchasing Officer, Kitchen Staff, Food Server).
+
+### 🩺 Doctor Portal
+Responsible for medical assessments and prescribing diets.
+* **1. Doctor Dashboard:** Displays KPIs like Active Patients and Total Diets Prescribed.
+* **2. Patient Profiles:** Shows the list of patients added by Admissions.
+* **3. Diet Prescriptions:** The doctor writes the diet prescription (e.g., "Low-Sodium", "Soft Diet"), adds allergen restrictions, and provides medical orders. This immediately pushes to the Dietitian's portal.
+* **4. Diet History:** Tracks the historical prescribed diets and whether the meal has been served or is pending.
+
+### 🥗 Dietitian Portal
+Responsible for assigning daily meals within budget, planning, and reporting.
+* **1. Dietitian Dashboard:** High-level KPIs (Meals planned today, Total budget used, Pending prescriptions).
+* **2. Patient Profiles:** View patients and edit nutritional profiles.
+* **3. Diet Prescriptions:** A detailed view of the doctor's prescriptions to guide meal planning.
+* **4. Meal Assignment:** The core screen. The dietitian assigns Breakfast, Lunch, and Dinner based on the doctor's prescription. 
+  * *UI Note:* Active Diet Groups are collapsible on the sidebar, Meal Assignment takes up the main view, and a Financial Summary tracks the ₱150 daily budget per patient.
+  * Allows single patient (special orders) and batch assignments for multiple patients with the same diagnosis.
+* **5. Meal Calendar:** Long-term meal planning view.
+* **6. Dish Menu:** Where the dietitian creates and manages the hospital's recipes/dishes and maps their required ingredients.
+* **7. Food Exchange AI:** An integrated AI chatbot that allows the dietitian to ask for Philippine Food Exchange list substitutes (e.g., "What can I substitute for 100g of pork?").
+* **8. Service History:** Tracks assigned meals and their service status.
+* **9. DOH Audit Report:** Generates downloadable Excel reports for the Department of Health (patients served, total ingredient costs, budget compliance).
+
+### 🛒 Purchasing Officer Portal (JIT Workflow)
+Responsible for daily market runs and logging receipts. *(Massively overhauled from the old design)*
+* **1. Purchasing Dashboard (Daily Market List):** Instead of a traditional low-stock warehouse view, this screen aggregates all ingredients needed for tomorrow's assigned meals. 
+  * The officer goes to the market, buys the items, and clicks **"Log Purchase"** to input the exact price paid.
+  * Includes a **"Log Unplanned Purchase"** modal for budget adjustments or substitute ingredients bought at the market that weren't on the list.
+  * Logging a purchase automatically adds the item to the hospital's inventory stock.
+* **2. Purchase History & Receipts:** Tracks all incoming purchases and manual market receipts. (Replaced the old "Purchase Orders" and "Stock Movement" screens for simplicity).
+* **3. Inventory Dashboard:** Shows current stock levels (which generally drop to zero daily after production).
+
+### 🍳 Kitchen Staff Portal
+Responsible for food production and inventory backflushing.
+* **1. Production Schedule:** Displays the exact dishes and quantities to cook today based on Dietitian assignments. The staff clicks "Mark as Cooked" when food is ready.
+  * *Crucial Backend Trigger:* Clicking "Mark as Cooked" triggers the **Inventory Backflush**, automatically deducting the exact ingredients used from the system's inventory.
+* **2. Production History (Backflush History):** View all completed production items and the ingredients that were automatically deducted.
+
+### 🍽️ Food Server Portal
+Responsible for delivering meals to patient rooms.
+* **1. Distribution List:** Displays the food assigned to each patient, their dietary prescriptions, and their room number.
+* **2. QR Code Scanner:** The server scans a QR code on a ward/room door. The system instantly filters the list to show only the patients in that room, allowing the server to quickly "Mark All as Served".
+
+---
+
+## 3. Database Schema (MySQL)
 
 We have created the migration files in the Laravel backend (`hospital-backend`). Here is the core structure of the tables:
 
@@ -68,15 +122,6 @@ erDiagram
 
 ---
 
-## 3. Frontend Architecture
-
-* **Framework:** Vue 3 (Vite) + TailwindCSS.
-* **State Management:** Pinia (`src/stores/dataStore.js`).
-* **Routing:** Vue Router (`src/router/index.js`).
-* **API Integration Point:** Currently, `dataStore.js` uses `localStorage` for data persistence. This store must be updated to make HTTP requests (using Axios) to the Laravel backend.
-
----
-
 ## 4. Current Work: Backend To-Do List
 
 For the developer continuing backend development:
@@ -106,11 +151,11 @@ Build the following API endpoints in Laravel:
 
 ### Step 4: DOH Audit Reporting
 * Create an endpoint to generate comprehensive reports for DOH (Department of Health) audits.
-* **Logic:** The backend should compile data from `purchase_history` (expenses) and `meal_assignments` (budget adherence) and return a structured report matching the `DohReport.vue` requirements.
+* **Logic:** The backend should compile data from `purchase_history` (expenses) and `meal_assignments` (budget adherence) and return a structured report.
 
 ### Step 5: AI Food Exchange Chatbot Integration
 * The Dietitian portal includes a "Food Exchange AI" tool.
-* **Logic:** Create a Laravel service that connects to an LLM API (like OpenAI or Gemini). Expose an endpoint (`POST /api/chat/food-exchange`) that takes a dietitian's query (e.g., "What can I substitute for 100g of pork?") and returns nutritional equivalents based on Philippine Food Exchange lists.
+* **Logic:** Create a Laravel service that connects to an LLM API (like OpenAI or Gemini). Expose an endpoint (`POST /api/chat/food-exchange`) that takes a dietitian's query.
 
 ### Step 6: Database Triggers & Observers (Automation)
 * Use Laravel Observers (or MySQL triggers) to automate background tasks.
