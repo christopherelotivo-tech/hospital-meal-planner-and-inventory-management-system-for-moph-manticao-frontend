@@ -65,11 +65,46 @@ Responsible for food production and inventory backflushing.
 ### 🍽️ Food Server Portal (`src/components/foodServer/`)
 Responsible for delivering meals to patient rooms.
 * `DistributionList.vue`: Displays food assigned to each patient, dietary prescriptions, and room number.
-* `MobileDistribution.vue`: Mobile-optimized view (usually with QR scanning functionality) to quickly mark meals as served by room/ward.
+* `MobileDistribution.vue`: Mobile-optimized view allowing the server to quickly filter by room/ward and manually mark meals as served. (QR Code functionality was removed for simplicity).
 
 ---
 
-## 3. Database Schema (MySQL)
+## 3. System Data Flow & Module Connections (The JIT Lifecycle)
+
+To help the AI backend developer understand how the modules connect, here is the exact chronological flow of data through the system:
+
+### Phase 1: Clinical Assessment
+1. **Admissions (`PatientRegistration.vue`)** creates a new patient.
+2. The data flows to **Doctor (`PatientPrescriptionsScreen.vue`)**. The Doctor assesses the patient and writes a `diet_prescription` (e.g., "Low-Sodium, 1500 kcal").
+
+### Phase 2: Dietitian Planning & Assignment
+1. The Dietitian sees the Doctor's prescription in **`PrescriptionsView.vue`**.
+2. Using the **`DishMenu.vue`** (where recipes and ingredient mappings live) and the **`FoodExchangeHub.vue`** AI, the Dietitian plans meals.
+3. In **`MealAssignmentScreen.vue`**, the Dietitian formally assigns Breakfast, Lunch, and Dinner dishes to the patient for a specific date (usually tomorrow).
+4. The backend aggregates all assigned dishes and breaks them down into their core ingredients to form the **`DailyProduction.vue`** list.
+
+### Phase 3: Purchasing (JIT Procurement)
+1. The aggregated ingredients flow into the **`PurchasingOfficerDashboard.vue` (Market List)**. 
+2. The Purchasing Officer prints this list, goes to the market, and buys the items.
+3. The Purchasing Officer clicks **"Log Purchase"** on the dashboard. This action:
+   * Inserts the data into **`PurchaseHistory.vue`**.
+   * Logs a positive stock entry in the **`StockMovementLog.vue`**.
+   * Increases the physical `ingredients` table stock.
+4. If they bought something not on the list (or a substitute), they use the **"Add Unplanned Purchase"** modal, which does the exact same database actions as a planned purchase.
+
+### Phase 4: Production & Backflushing
+1. The Kitchen Staff opens the **`ProductionSchedule.vue` (Prep Sheet)**. They see the exact dishes to cook based on the Dietitian's assignments.
+2. Once cooking is finished, they click "Mark as Cooked".
+3. **CRITICAL BACKEND TRIGGER:** This action triggers an **Inventory Backflush**. The backend calculates all ingredients used in those dishes and instantly deducts them from the `ingredients` table stock, recording a negative entry in the **`StockMovementLog.vue`** and moving the log to **`ProductionHistory.vue`**.
+
+### Phase 5: Service & Reporting
+1. The Food Server opens **`MobileDistribution.vue`** or **`DistributionList.vue`**, sees the meals are ready, and manually marks them as "Served" after delivering them to the patient's room.
+2. This status flows back to the Dietitian's **`MealServiceHistory.vue`**.
+3. Finally, the system aggregates the meal costs and purchase history into the **`DohReport.vue`** template for compliance auditing.
+
+---
+
+## 4. Database Schema (MySQL)
 
 We have created the migration files in the Laravel backend (`hospital-backend`). Here is the core structure of the tables:
 
@@ -119,7 +154,7 @@ erDiagram
 
 ---
 
-## 4. Current Work: Backend To-Do List
+## 5. Current Work: Backend To-Do List
 
 For the developer continuing backend development:
 
@@ -148,11 +183,11 @@ Build the following API endpoints in Laravel:
 
 ### Step 4: DOH Audit Reporting
 * Create an endpoint to generate comprehensive reports for DOH (Department of Health) audits.
-* **Logic:** The backend should compile data from `purchase_history` (expenses) and `meal_assignments` (budget adherence) and return a structured report.
+* **Logic:** The backend should compile data from `purchase_history` (expenses) and `meal_assignments` (budget adherence) and return a structured report matching the `DohReport.vue` requirements.
 
 ### Step 5: AI Food Exchange Chatbot Integration
 * The Dietitian portal includes a "Food Exchange AI" tool.
-* **Logic:** Create a Laravel service that connects to an LLM API (like OpenAI or Gemini). Expose an endpoint (`POST /api/chat/food-exchange`) that takes a dietitian's query.
+* **Logic:** Create a Laravel service that connects to an LLM API (like OpenAI or Gemini). Expose an endpoint (`POST /api/chat/food-exchange`) that takes a dietitian's query (e.g., "What can I substitute for 100g of pork?") and returns nutritional equivalents based on Philippine Food Exchange lists.
 
 ### Step 6: Database Triggers & Observers (Automation)
 * Use Laravel Observers (or MySQL triggers) to automate background tasks.
@@ -161,7 +196,7 @@ Build the following API endpoints in Laravel:
 
 ---
 
-## 5. How to Connect Frontend to Backend
+## 6. How to Connect Frontend to Backend
 
 1. In the Vue frontend, install Axios: `npm install axios`.
 2. Configure a base API utility file (e.g., `src/utils/api.js`) pointing to `http://localhost:8000/api`.
