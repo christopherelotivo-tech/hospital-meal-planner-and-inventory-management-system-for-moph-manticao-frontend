@@ -157,11 +157,11 @@ const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'patients', label: 'Patient Profiles', icon: Users },
   { id: 'prescriptions', label: 'Diet Prescriptions', icon: ClipboardList },
+  { id: 'calendar', label: 'Meal Calendar', icon: CalendarCheck },
+  { id: 'dish-menu', label: 'Dish Menu', icon: ChefHat },
   { id: 'exchange-hub', label: 'Food Exchange AI', icon: Sparkles },
   { id: 'meals', label: 'Meal Assignment', icon: CalendarDays },
   { id: 'production', label: 'Daily Production', icon: UtensilsCrossed },
-  { id: 'calendar', label: 'Meal Calendar', icon: CalendarCheck },
-  { id: 'dish-menu', label: 'Dish Menu', icon: ChefHat },
   { id: 'history', label: 'Service History', icon: History },
   { id: 'doh-report', label: 'DOH Audit Report', icon: FileSignature }
 ];

@@ -22,16 +22,22 @@
     </div>
 
     <!-- Main Workspace Area -->
-    <div class="flex flex-1 gap-6 min-h-0">
+    <div class="flex flex-1 gap-4 min-h-0">
       
       <!-- Left Pane: Diet Groups -->
-      <div class="w-1/3 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col overflow-hidden shrink-0">
-        <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center shrink-0">
-          <h2 class="font-bold text-gray-800 flex items-center space-x-2">
+      <div 
+        class="bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col overflow-hidden shrink-0 transition-all duration-300"
+        :class="isSidebarOpen ? 'w-[300px]' : 'w-[72px]'"
+      >
+        <div class="p-3 border-b border-gray-100 bg-gray-50 flex justify-between items-center shrink-0">
+          <h2 v-if="isSidebarOpen" class="font-bold text-gray-800 flex items-center space-x-2 whitespace-nowrap">
             <Users :size="16" class="text-emerald-600" />
-            <span>Active Diet Groups</span>
+            <span>Diet Groups</span>
           </h2>
-          <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">{{ totalPatients }} patients</span>
+          <button @click="isSidebarOpen = !isSidebarOpen" class="p-1.5 hover:bg-gray-200 rounded-lg text-gray-500 transition-colors mx-auto">
+            <PanelLeftClose v-if="isSidebarOpen" :size="18" />
+            <PanelLeftOpen v-else :size="18" />
+          </button>
         </div>
         
         <div class="overflow-y-auto flex-1 p-2 space-y-2">
@@ -39,29 +45,33 @@
             v-for="group in dietGroups" 
             :key="group.dietType"
             @click="selectedGroup = group"
-            class="p-3 rounded-xl border-2 cursor-pointer transition-all group flex items-center justify-between"
-            :class="selectedGroup?.dietType === group.dietType 
-              ? 'border-emerald-500 bg-emerald-50 shadow-sm' 
-              : 'border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30'"
+            class="rounded-xl border-2 cursor-pointer transition-all group flex items-center justify-between"
+            :class="[
+              isSidebarOpen ? 'p-3' : 'p-2 justify-center',
+              selectedGroup?.dietType === group.dietType 
+                ? 'border-emerald-500 bg-emerald-50 shadow-sm' 
+                : 'border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30'
+            ]"
+            :title="group.dietType"
           >
-            <div>
-              <p class="font-semibold text-sm text-gray-900">{{ group.dietType }}</p>
+            <div v-if="isSidebarOpen" class="overflow-hidden mr-2">
+              <p class="font-semibold text-sm text-gray-900 truncate">{{ group.dietType }}</p>
               <p class="text-xs text-gray-500 mt-0.5">{{ group.patients.length }} patients</p>
             </div>
-            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-emerald-600 font-bold text-xs border border-emerald-100">
+            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-emerald-600 font-bold text-xs border border-emerald-100 shrink-0">
               {{ group.patients.length }}
             </div>
           </div>
           
           <div v-if="dietGroups.length === 0" class="text-center py-10">
-            <Users :size="32" class="mx-auto mb-2 text-gray-300" />
-            <p class="text-sm text-gray-500">No active patients found.</p>
+            <Users :size="isSidebarOpen ? 32 : 24" class="mx-auto mb-2 text-gray-300" />
+            <p v-if="isSidebarOpen" class="text-sm text-gray-500">No active patients found.</p>
           </div>
         </div>
       </div>
 
       <!-- Right Pane: Meal Assignment for Selected Group -->
-      <div class="w-2/3 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col overflow-hidden">
+      <div class="flex-1 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col overflow-hidden">
         <div v-if="selectedGroup" class="flex flex-col h-full">
           <div class="p-5 border-b border-gray-100 shrink-0 bg-emerald-600 text-white flex justify-between items-center">
             <div>
@@ -244,17 +254,16 @@
     </div>
 
     <!-- Sticky Financial Summary Footer Bar (₱150 Budget Cap) -->
-    <div class="bg-white border-t-4 border-t-emerald-500 border border-x-gray-200 border-b-gray-200 rounded-b-2xl shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.1)] p-4 shrink-0 flex items-center justify-between z-10 sticky bottom-0">
+    <div class="bg-white border-t-4 border-t-emerald-500 border border-x-gray-200 border-b-gray-200 rounded-b-2xl shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.1)] py-2 px-4 shrink-0 flex items-center justify-between z-10 sticky bottom-0">
       
       <div class="flex-1 max-w-xl">
-        <div class="flex justify-between items-end mb-1.5">
+        <div class="flex justify-between items-center mb-1">
           <div>
             <p class="text-sm font-bold text-gray-800">Financial Summary <span class="text-gray-400 font-normal ml-2">Total Projected Cost: ₱{{ grandTotalCost.toFixed(2) }}</span></p>
-            <p class="text-xs text-gray-500">Daily Budget Cap: ₱150.00 per patient (MOPH Manticao standard allocation)</p>
           </div>
-          <div class="text-right">
-            <p class="text-xs font-bold uppercase tracking-wider" :class="budgetStatus.textColor">Average Cost Today</p>
-            <p class="text-xl font-bold" :class="budgetStatus.textColor">₱{{ averageCostPerPatient.toFixed(2) }} <span class="text-sm text-gray-400 font-normal">/ ₱150.00</span></p>
+          <div class="text-right flex items-center space-x-2">
+            <p class="text-[10px] font-bold uppercase tracking-wider" :class="budgetStatus.textColor">Avg Cost Today</p>
+            <p class="text-sm font-bold" :class="budgetStatus.textColor">₱{{ averageCostPerPatient.toFixed(2) }} <span class="text-[10px] text-gray-400 font-normal">/ ₱150.00</span></p>
           </div>
         </div>
         
@@ -273,16 +282,16 @@
         </p>
       </div>
 
-      <div class="ml-8 shrink-0 flex space-x-3">
-        <button class="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold text-sm transition-colors shadow-sm border border-gray-200">
+      <div class="ml-8 shrink-0 flex space-x-2">
+        <button class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-semibold text-xs transition-colors shadow-sm border border-gray-200">
           Save Draft
         </button>
         <button 
           @click="showPrepSheetPreview"
-          class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-md transition-all flex items-center space-x-2 transform hover:-translate-y-0.5"
+          class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-xs transition-colors shadow-sm flex items-center space-x-2"
         >
-          <Rocket :size="18" />
-          <span>Dispatch to Kitchen & Generate Prep Sheet</span>
+          <UtensilsCrossed :size="14" />
+          <span>Dispatch & Preview</span>
         </button>
       </div>
 
@@ -352,13 +361,19 @@
 import { ref, computed, reactive, watch } from 'vue';
 import { useDataStore } from '@/stores/dataStore';
 import { useAuthStore } from '@/stores/authStore';
-import { Users, UtensilsCrossed, Sun, Moon, Rocket, AlertTriangle, X, Printer, CalendarCheck } from 'lucide-vue-next';
+import { 
+  UtensilsCrossed, Users, Sun, Moon, 
+  CalendarCheck, AlertTriangle, FileText, CheckCircle, X,
+  PanelLeftClose, PanelLeftOpen
+} from 'lucide-vue-next';
 
 const dataStore = useDataStore();
 const authStore = useAuthStore();
 
-const today = new Date().toISOString().split('T')[0];
-const selectedDate = ref(today);
+// State
+const selectedDate = ref(new Date().toISOString().split('T')[0]);
+const selectedGroup = ref(null);
+const isSidebarOpen = ref(true);
 
 // ── Group Patients by Diet ──────────────────────────────────────────────
 const dietGroups = computed(() => {
@@ -385,8 +400,6 @@ const dietGroups = computed(() => {
 });
 
 const totalPatients = computed(() => dietGroups.value.reduce((sum, g) => sum + g.patients.length, 0));
-
-const selectedGroup = ref(null);
 
 // ── Meal Selections State ───────────────────────────────────────────────
 // Keep track of the selected dishes for each diet group

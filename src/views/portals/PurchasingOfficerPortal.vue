@@ -133,12 +133,12 @@
         </button>
 
         <button
-          @click="selectModule('purchaseOrders')"
+          @click="selectModule('purchaseHistory')"
           class="flex flex-col items-center py-2 rounded-lg transition-colors"
-          :class="currentModule === 'purchaseOrders' ? 'bg-blue-100 text-blue-700' : 'text-gray-600'"
+          :class="currentModule === 'purchaseHistory' ? 'bg-blue-100 text-blue-700' : 'text-gray-600'"
         >
-          <ClipboardList :size="20" />
-          <span class="text-xs font-semibold mt-1">Orders</span>
+          <Receipt :size="20" />
+          <span class="text-xs font-semibold mt-1">History</span>
         </button>
       </div>
     </div>
@@ -150,12 +150,12 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
-import { LayoutDashboard, Package, ClipboardList, LogOut, ChevronDown } from 'lucide-vue-next';
+import { LayoutDashboard, Package, Receipt, LogOut, ChevronDown } from 'lucide-vue-next';
 import BasePortalLayout from '@/components/layout/BasePortalLayout.vue';
 import NotificationBell from '@/components/NotificationBell.vue';
 import PurchasingOfficerDashboard from '@/components/purchasingOfficer/PurchasingOfficerDashboard.vue';
 import StockMovementLog from '@/components/purchasingOfficer/StockMovementLog.vue';
-import PurchaseOrders from '@/components/purchasingOfficer/PurchaseOrders.vue';
+import PurchaseHistory from '@/components/purchasingOfficer/PurchaseHistory.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -182,7 +182,7 @@ onUnmounted(() => { document.removeEventListener('click', closeDropdown); });
 const menuItems = [
   { id: 'dashboard', label: 'Inventory Dashboard', icon: LayoutDashboard },
   { id: 'stock', label: 'Stock Movement Log', icon: Package },
-  { id: 'purchaseOrders', label: 'Purchase Orders', icon: ClipboardList }
+  { id: 'purchaseHistory', label: 'Purchase History & Receipts', icon: Receipt }
 ];
 
 function selectModule(moduleId) {
@@ -196,7 +196,7 @@ function getCurrentModuleTitle() {
   const titles = {
     dashboard: 'Inventory Dashboard',
     stock: 'Stock Movement Log',
-    purchaseOrders: 'Purchase Orders'
+    purchaseHistory: 'Purchase History & Receipts'
   };
   return titles[currentModule.value] || 'Dashboard';
 }
@@ -205,7 +205,7 @@ function getCurrentModuleDescription() {
   const descriptions = {
     dashboard: 'Overview of inventory levels and stock status',
     stock: 'Track all incoming and outgoing stock movements',
-    purchaseOrders: 'Manage and track all procurement purchase orders'
+    purchaseHistory: 'View past market receipts and manual inventory logs'
   };
   return descriptions[currentModule.value] || '';
 }
@@ -214,7 +214,7 @@ function getCurrentModuleComponent() {
   const components = {
     dashboard: PurchasingOfficerDashboard,
     stock: StockMovementLog,
-    purchaseOrders: PurchaseOrders
+    purchaseHistory: PurchaseHistory
   };
   return components[currentModule.value] || PurchasingOfficerDashboard;
 }

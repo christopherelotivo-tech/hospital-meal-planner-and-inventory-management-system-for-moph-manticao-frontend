@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="space-y-6 w-full max-w-full overflow-x-hidden pb-8">
 
     <!-- Header Banner -->
@@ -57,14 +57,14 @@
       </div>
       <button @click="showCreateModal = true" class="px-5 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-semibold text-sm shadow-sm transition-all flex items-center space-x-2">
         <Plus :size="16" />
-        <span>Log Today's Market Purchases</span>
+        <span>Log Manual Receipt</span>
       </button>
     </div>
 
     <!-- Records Table -->
     <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
       <div class="p-5 border-b border-slate-100 bg-slate-50">
-        <h3 class="font-bold text-slate-800">All Market Purchase Records</h3>
+        <h3 class="font-bold text-slate-800">All Purchase History & Receipts</h3>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
@@ -150,7 +150,7 @@
         <div class="bg-gradient-to-r from-violet-700 to-indigo-500 text-white p-5 flex items-center justify-between shrink-0">
           <div class="flex items-center space-x-2">
             <ShoppingBag :size="20" />
-            <h3 class="font-bold text-lg">Log Today's Market Purchases</h3>
+            <h3 class="font-bold text-lg">Log Manual Receipt</h3>
           </div>
           <button @click="closeCreateModal" class="text-white hover:text-violet-200 p-1"><X :size="20" /></button>
         </div>
@@ -218,7 +218,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useDataStore } from '@/stores/dataStore';
-import { ShoppingBag, Calendar, TrendingUp, Search, Plus, X, Info, MapPin, CheckCircle } from 'lucide-vue-next';
+import { ShoppingBag, Calendar, TrendingUp, Search, Plus, X, Info, MapPin, CheckCircle, Receipt } from 'lucide-vue-next';
 
 const dataStore = useDataStore();
 const currentDate = ref(new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
