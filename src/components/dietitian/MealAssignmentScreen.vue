@@ -135,26 +135,38 @@
                   <!-- Carb -->
                   <div>
                     <span class="text-[10px] font-semibold text-gray-500 uppercase">🌾 Carb</span>
-                    <select v-model="modalForm[slot.key + 'Carb']" @change="calcModalCost" class="w-full mt-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:border-green-500 outline-none text-xs bg-white">
-                      <option value="">-- None --</option>
-                      <option v-for="m in getComponentOptions(slot.items, 'Carbohydrate-Controlled Diet')" :key="m.name" :value="m.name">{{ m.name }}</option>
-                    </select>
+                    <SearchableSelect 
+                      v-model="modalForm[slot.key + 'Carb']" 
+                      @change="calcModalCost"
+                      :options="getComponentOptions(slot.items, 'Carbohydrate-Controlled Diet')"
+                      placeholder="Search Carb..."
+                      valueKey="name"
+                      class="mt-1"
+                    />
                   </div>
                   <!-- Viand -->
                   <div>
                     <span class="text-[10px] font-semibold text-gray-500 uppercase">🍗 Viand</span>
-                    <select v-model="modalForm[slot.key + 'Protein']" @change="calcModalCost" class="w-full mt-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:border-green-500 outline-none text-xs bg-white">
-                      <option value="">-- None --</option>
-                      <option v-for="m in getComponentOptions(slot.items, 'Protein/Viand')" :key="m.name" :value="m.name">{{ m.name }}</option>
-                    </select>
+                    <SearchableSelect 
+                      v-model="modalForm[slot.key + 'Protein']" 
+                      @change="calcModalCost"
+                      :options="getComponentOptions(slot.items, 'Protein/Viand')"
+                      placeholder="Search Viand..."
+                      valueKey="name"
+                      class="mt-1"
+                    />
                   </div>
                   <!-- Side -->
                   <div>
                     <span class="text-[10px] font-semibold text-gray-500 uppercase">🍎 Side/Fruit</span>
-                    <select v-model="modalForm[slot.key + 'Side']" @change="calcModalCost" class="w-full mt-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:border-green-500 outline-none text-xs bg-white">
-                      <option value="">-- None --</option>
-                      <option v-for="m in getComponentOptions(slot.items, 'Side/Fruit')" :key="m.name" :value="m.name">{{ m.name }}</option>
-                    </select>
+                    <SearchableSelect 
+                      v-model="modalForm[slot.key + 'Side']" 
+                      @change="calcModalCost"
+                      :options="getComponentOptions(slot.items, 'Side/Fruit')"
+                      placeholder="Search Side..."
+                      valueKey="name"
+                      class="mt-1"
+                    />
                   </div>
                 </div>
                 
@@ -269,7 +281,10 @@
 import { ref, computed } from 'vue';
 import { useDataStore } from '@/stores/dataStore';
 import { useAuthStore } from '@/stores/authStore';
-import { User, Users, Utensils, AlertCircle, CheckCircle, Save, X, Pencil, ChevronRight, Link as LinkIcon, Search, ClipboardList } from 'lucide-vue-next';
+import { 
+  Utensils, Calendar, ChevronRight, X, UserX, AlertCircle, Link as LinkIcon, AlertTriangle, UserPlus, CheckCircle, Pencil, Search, ClipboardList, Save
+} from 'lucide-vue-next';
+import SearchableSelect from '@/components/common/SearchableSelect.vue';
 
 const dataStore = useDataStore();
 const authStore = useAuthStore();

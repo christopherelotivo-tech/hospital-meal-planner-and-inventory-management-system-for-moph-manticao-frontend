@@ -104,41 +104,29 @@
                 <!-- Carb -->
                 <div>
                   <span class="text-xs font-semibold text-gray-500 uppercase">🌾 Carb</span>
-                  <select 
+                  <SearchableSelect 
                     v-model="groupSelections[selectedGroup.dietType].breakfastCarb" 
-                    class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg focus:border-amber-500 outline-none text-xs bg-white shadow-sm"
-                  >
-                    <option :value="null">-- None --</option>
-                    <option v-for="dish in getDishesByComponent('Breakfast', selectedGroup.dietType, 'Carbohydrate-Controlled Diet')" :key="dish.id" :value="dish">
-                      {{ dish.name }} (₱{{ dish.cost.toFixed(2) }})
-                    </option>
-                  </select>
+                    :options="getDishesByComponent('Breakfast', selectedGroup.dietType, 'Carbohydrate-Controlled Diet')"
+                    placeholder="Search Carb..."
+                  />
                 </div>
                 <!-- Viand -->
                 <div>
                   <span class="text-xs font-semibold text-gray-500 uppercase">🍗 Viand</span>
-                  <select 
+                  <SearchableSelect 
                     v-model="groupSelections[selectedGroup.dietType].breakfastProtein" 
-                    class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg focus:border-amber-500 outline-none text-xs bg-white shadow-sm"
-                  >
-                    <option :value="null">-- None --</option>
-                    <option v-for="dish in getDishesByComponent('Breakfast', selectedGroup.dietType, 'Protein/Viand')" :key="dish.id" :value="dish">
-                      {{ dish.name }} (₱{{ dish.cost.toFixed(2) }})
-                    </option>
-                  </select>
+                    :options="getDishesByComponent('Breakfast', selectedGroup.dietType, 'Protein/Viand')"
+                    placeholder="Search Viand..."
+                  />
                 </div>
                 <!-- Side -->
                 <div>
                   <span class="text-xs font-semibold text-gray-500 uppercase">🍎 Side/Fruit</span>
-                  <select 
+                  <SearchableSelect 
                     v-model="groupSelections[selectedGroup.dietType].breakfastSide" 
-                    class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg focus:border-amber-500 outline-none text-xs bg-white shadow-sm"
-                  >
-                    <option :value="null">-- None --</option>
-                    <option v-for="dish in getDishesByComponent('Breakfast', selectedGroup.dietType, 'Side/Fruit')" :key="dish.id" :value="dish">
-                      {{ dish.name }} (₱{{ dish.cost.toFixed(2) }})
-                    </option>
-                  </select>
+                    :options="getDishesByComponent('Breakfast', selectedGroup.dietType, 'Side/Fruit')"
+                    placeholder="Search Side..."
+                  />
                 </div>
               </div>
             </div>
@@ -153,41 +141,29 @@
                 <!-- Carb -->
                 <div>
                   <span class="text-xs font-semibold text-gray-500 uppercase">🌾 Carb</span>
-                  <select 
+                  <SearchableSelect 
                     v-model="groupSelections[selectedGroup.dietType].lunchCarb" 
-                    class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg focus:border-orange-500 outline-none text-xs bg-white shadow-sm"
-                  >
-                    <option :value="null">-- None --</option>
-                    <option v-for="dish in getDishesByComponent('Lunch', selectedGroup.dietType, 'Carbohydrate-Controlled Diet')" :key="dish.id" :value="dish">
-                      {{ dish.name }} (₱{{ dish.cost.toFixed(2) }})
-                    </option>
-                  </select>
+                    :options="getDishesByComponent('Lunch', selectedGroup.dietType, 'Carbohydrate-Controlled Diet')"
+                    placeholder="Search Carb..."
+                  />
                 </div>
                 <!-- Viand -->
                 <div>
                   <span class="text-xs font-semibold text-gray-500 uppercase">🍗 Viand</span>
-                  <select 
+                  <SearchableSelect 
                     v-model="groupSelections[selectedGroup.dietType].lunchProtein" 
-                    class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg focus:border-orange-500 outline-none text-xs bg-white shadow-sm"
-                  >
-                    <option :value="null">-- None --</option>
-                    <option v-for="dish in getDishesByComponent('Lunch', selectedGroup.dietType, 'Protein/Viand')" :key="dish.id" :value="dish">
-                      {{ dish.name }} (₱{{ dish.cost.toFixed(2) }})
-                    </option>
-                  </select>
+                    :options="getDishesByComponent('Lunch', selectedGroup.dietType, 'Protein/Viand')"
+                    placeholder="Search Viand..."
+                  />
                 </div>
                 <!-- Side -->
                 <div>
                   <span class="text-xs font-semibold text-gray-500 uppercase">🍎 Side/Fruit</span>
-                  <select 
+                  <SearchableSelect 
                     v-model="groupSelections[selectedGroup.dietType].lunchSide" 
-                    class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg focus:border-orange-500 outline-none text-xs bg-white shadow-sm"
-                  >
-                    <option :value="null">-- None --</option>
-                    <option v-for="dish in getDishesByComponent('Lunch', selectedGroup.dietType, 'Side/Fruit')" :key="dish.id" :value="dish">
-                      {{ dish.name }} (₱{{ dish.cost.toFixed(2) }})
-                    </option>
-                  </select>
+                    :options="getDishesByComponent('Lunch', selectedGroup.dietType, 'Side/Fruit')"
+                    placeholder="Search Side..."
+                  />
                 </div>
               </div>
             </div>
@@ -202,41 +178,29 @@
                 <!-- Carb -->
                 <div>
                   <span class="text-xs font-semibold text-gray-500 uppercase">🌾 Carb</span>
-                  <select 
+                  <SearchableSelect 
                     v-model="groupSelections[selectedGroup.dietType].dinnerCarb" 
-                    class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-xs bg-white shadow-sm"
-                  >
-                    <option :value="null">-- None --</option>
-                    <option v-for="dish in getDishesByComponent('Dinner', selectedGroup.dietType, 'Carbohydrate-Controlled Diet')" :key="dish.id" :value="dish">
-                      {{ dish.name }} (₱{{ dish.cost.toFixed(2) }})
-                    </option>
-                  </select>
+                    :options="getDishesByComponent('Dinner', selectedGroup.dietType, 'Carbohydrate-Controlled Diet')"
+                    placeholder="Search Carb..."
+                  />
                 </div>
                 <!-- Viand -->
                 <div>
                   <span class="text-xs font-semibold text-gray-500 uppercase">🍗 Viand</span>
-                  <select 
+                  <SearchableSelect 
                     v-model="groupSelections[selectedGroup.dietType].dinnerProtein" 
-                    class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-xs bg-white shadow-sm"
-                  >
-                    <option :value="null">-- None --</option>
-                    <option v-for="dish in getDishesByComponent('Dinner', selectedGroup.dietType, 'Protein/Viand')" :key="dish.id" :value="dish">
-                      {{ dish.name }} (₱{{ dish.cost.toFixed(2) }})
-                    </option>
-                  </select>
+                    :options="getDishesByComponent('Dinner', selectedGroup.dietType, 'Protein/Viand')"
+                    placeholder="Search Viand..."
+                  />
                 </div>
                 <!-- Side -->
                 <div>
                   <span class="text-xs font-semibold text-gray-500 uppercase">🍎 Side/Fruit</span>
-                  <select 
+                  <SearchableSelect 
                     v-model="groupSelections[selectedGroup.dietType].dinnerSide" 
-                    class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-xs bg-white shadow-sm"
-                  >
-                    <option :value="null">-- None --</option>
-                    <option v-for="dish in getDishesByComponent('Dinner', selectedGroup.dietType, 'Side/Fruit')" :key="dish.id" :value="dish">
-                      {{ dish.name }} (₱{{ dish.cost.toFixed(2) }})
-                    </option>
-                  </select>
+                    :options="getDishesByComponent('Dinner', selectedGroup.dietType, 'Side/Fruit')"
+                    placeholder="Search Side..."
+                  />
                 </div>
               </div>
             </div>
@@ -364,8 +328,9 @@ import { useAuthStore } from '@/stores/authStore';
 import { 
   UtensilsCrossed, Users, Sun, Moon, 
   CalendarCheck, AlertTriangle, FileText, CheckCircle, X,
-  PanelLeftClose, PanelLeftOpen
+  PanelLeftClose, PanelLeftOpen, Printer
 } from 'lucide-vue-next';
+import SearchableSelect from '@/components/common/SearchableSelect.vue';
 
 const dataStore = useDataStore();
 const authStore = useAuthStore();
