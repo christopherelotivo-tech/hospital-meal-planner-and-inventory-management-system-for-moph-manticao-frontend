@@ -77,23 +77,23 @@ To help the AI backend developer understand how the modules connect, here is the
 1. **Admissions (`PatientRegistration.vue`)** creates a new patient.
 2. The data flows to **Doctor (`PatientPrescriptionsScreen.vue`)**. The Doctor assesses the patient and writes a `diet_prescription` (e.g., "Low-Sodium, 1500 kcal").
 
-### Phase 2: Dietitian Planning & Assignment
-1. The Dietitian sees the Doctor's prescription in **`PrescriptionsView.vue`**.
-2. Using the **`DishMenu.vue`** (where recipes and ingredient mappings live) and the **`FoodExchangeHub.vue`** AI, the Dietitian plans meals.
-3. **`MealAssignmentScreen.vue` (For Special Cases ONLY):** The Dietitian uses this screen *strictly* to assign specific dishes to the minority of patients with special diets (Diabetics, Renal) or severe allergies.
-4. **`DailyProduction.vue` (The Bulk Planner):** This is the master screen for bulk planning. The system automatically calculates the total Census (e.g., 100), subtracts the special assigned patients (e.g., 15), and leaves the remaining "Normal Diet" patients (85). The Dietitian bulk-assigns standard dishes to these 85 patients directly from this screen, without creating individual patient assignment records.
-5. The backend aggregates the ingredients from the bulk Normal diets + the special assigned diets to form the final ingredient list for Purchasing and Kitchen.
+### Phase 2: Dietitian Planning & Assignment (The Pipeline)
+The Dietitian's workflow happens across 4 screens that feed into each other chronologically:
 
-### Phase 3: Purchasing (JIT Procurement)
-1. The aggregated ingredients flow into the **`PurchasingOfficerDashboard.vue` (Market List)**. 
+1. **`DishMenu.vue` (The Master Library):** The Dietitian creates recipes and maps raw ingredients here. Nothing else works without this. All dropdowns in the system pull from here.
+2. **`MealCalendar.vue` (The Suggestion Template):** The Dietitian can optionally schedule dishes for specific dates (e.g., "Monday is Tinola"). This does NOT finalize anything; it only provides auto-fill suggestions for the next screens.
+3. **`MealAssignmentScreen.vue` (For Special Cases ONLY):** The Dietitian uses this screen *strictly* to assign specific custom meals to the minority of patients with special diets (Diabetics, Renal) or severe allergies.
+4. **`DailyProduction.vue` (The True Bulk Planner):** This is the master screen for bulk planning. 
+   - The system automatically calculates the total Census (e.g., 100), subtracts the special assigned patients (e.g., 15), and leaves the remaining "Normal Diet" patients (85). 
+   - The Dietitian clicks **"Load Cycle Menu"** to auto-fill the dropdowns based on the Meal Calendar, OR manually searches the dropdowns to pivot based on current market prices.
+   - The Dietitian bulk-assigns standard dishes to the 85 normal patients here.
+   - The backend aggregates the ingredients from the bulk Normal diets + the special assigned diets to form the final total ingredient list.
+
+### Phase 3: Purchasing (JIT Procurement & Market Pivots)
+1. The aggregated ingredients from `DailyProduction.vue` flow into the **`PurchasingOfficerDashboard.vue` (Market List)**. 
 2. The Purchasing Officer prints this list, goes to the market, and buys the items.
-3. The Purchasing Officer clicks **"Log Purchase"** on the dashboard. This action:
-   * Inserts the data into **`PurchaseHistory.vue`**.
-   * Logs a positive stock entry in the **`StockMovementLog.vue`**.
-   * Increases the physical `ingredients` table stock.
-4. If they bought something not on the list (or a substitute), they use the **"Add Unplanned Purchase"** modal, which does the exact same database actions as a planned purchase.
-
-### Phase 4: Production & Backflushing
+3. **Market Pivots:** If a planned ingredient (e.g., Eggs) suddenly tripled in price at the market, the Purchasing Officer uses **"Add Unplanned Purchase"** to buy a cheaper substitute (e.g., Pork). They log the actual prices from the receipts.
+4. The Dietitian can then update `DailyProduction.vue` to reflect the new ingredient, ensuring the kitchen cooks the correct newly-purchased substitute.
 1. The Kitchen Staff opens the **`ProductionSchedule.vue` (Prep Sheet)**. They see the exact dishes to cook based on the Dietitian's assignments.
 2. Once cooking is finished, they click "Mark as Cooked".
 3. **CRITICAL BACKEND TRIGGER:** This action triggers an **Inventory Backflush**. The backend calculates all ingredients used in those dishes and instantly deducts them from the `ingredients` table stock, recording a negative entry in the **`StockMovementLog.vue`** and moving the log to **`ProductionHistory.vue`**.
